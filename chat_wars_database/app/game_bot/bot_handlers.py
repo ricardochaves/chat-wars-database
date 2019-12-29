@@ -3,6 +3,7 @@ import logging
 from telegram import Update
 from telegram.ext import CallbackContext
 
+from chat_wars_database.app.business_core.models import Item
 from chat_wars_database.app.game_bot.pubsub_service import sent_message
 from chat_wars_database.app.setup.help_conn import close_connections
 
@@ -75,3 +76,28 @@ Suggestions: [Bot Channel](https://t.me/ricardobotsugestion)
 def error(update: Update, context: CallbackContext):
     """Log Errors caused by Updates."""
     logger.warning('Update "%s" caused error "%s"', update, context.error)
+
+
+def find(update: Update, context: CallbackContext):  # pylint: disable = unused-argument
+
+    if not update.message:
+        return
+
+    try:
+        term = update.message.text.split(" ")[1]
+    except IndexError:
+        update.message.reply_markdown("There is something wrong with the command. The correct one is /find recipe")
+        return
+
+    items = Item.objects.filter(name__icontains=term, command__isnull=False).all()
+
+    message = ""
+    for i in items:
+        message += f"\n /{i.command} - {i.name}"
+
+    if message:
+        message = (message[:4093] + "...") if len(message) > 4096 else message
+
+        update.message.reply_markdown(message)
+    else:
+        update.message.reply_markdown("Sorry, I couldn't find anything.")

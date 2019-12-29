@@ -1,10 +1,11 @@
 # ChatWars Database
 
-[![Build status](https://dev.azure.com/ricardobchaves/Ricardo/_apis/build/status/chat-wars-database/chat-wars-database)](https://dev.azure.com/ricardobchaves/Ricardo/_build/latest?definitionId=23) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/7b22103a3e4e4776983d692219add41d)](https://www.codacy.com/manual/ricardochaves/chat-wars-database?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ricardochaves/chat-wars-database&amp;utm_campaign=Badge_Grade) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black) [![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/ricardochaves/chat-wars-database/blob/master/LICENSE)
+[![Build status](https://dev.azure.com/ricardobchaves/Ricardo/_apis/build/status/chat-wars-database/chat-wars-database)](https://dev.azure.com/ricardobchaves/Ricardo/_build/latest?definitionId=23) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/7b22103a3e4e4776983d692219add41d)](https://www.codacy.com/manual/ricardochaves/chat-wars-database?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ricardochaves/chat-wars-database&amp;utm_campaign=Badge_Grade) [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/7b22103a3e4e4776983d692219add41d)](https://www.codacy.com/manual/ricardochaves/chat-wars-database?utm_source=github.com&utm_medium=referral&utm_content=ricardochaves/chat-wars-database&utm_campaign=Badge_Coverage) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black) [![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/ricardochaves/chat-wars-database/blob/master/LICENSE)
 
 ## Command List for BotFather
 
 /help - What can I do
+/find - Find any Item... /find gloves
 
 ## Data extraction
 
