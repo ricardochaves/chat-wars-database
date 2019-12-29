@@ -5,6 +5,7 @@
 ## Command List for BotFather
 
 /help - What can I do
+/find - Find any Item... /find gloves
 
 ## Data extraction
 

@@ -8,6 +8,7 @@ from telegram.ext import Updater
 
 from chat_wars_database.app.business_core.business import route_command
 from chat_wars_database.app.game_bot.bot_handlers import error
+from chat_wars_database.app.game_bot.bot_handlers import find
 from chat_wars_database.app.game_bot.bot_handlers import graph
 from chat_wars_database.app.game_bot.bot_handlers import help_command
 from chat_wars_database.app.game_bot.bot_handlers import start
@@ -29,6 +30,7 @@ def main():
     # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", help_command))
+    dp.add_handler(CommandHandler("find", find))
 
     # on noncommand i.e message - echo the message on Telegram
     dp.add_handler(MessageHandler(Filters.regex("\/g_.*?(?=_)_([1-2]\d$|[0-9]$)"), graph))
