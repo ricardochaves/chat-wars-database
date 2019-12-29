@@ -1,0 +1,13 @@
+version: "3.5"
+services:
+  db:
+    image: postgres:10.1-alpine
+  integration-tests:
+    image: python:3.7.4-slim
+    env_file: .env_integration_tests
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+    command: >
+      sh -c "pip install tox && cd app && tox && find . -name '*.pyc' -delete && rm -rf .tox"

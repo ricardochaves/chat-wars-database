@@ -1,0 +1,123 @@
+{% extends 'web/base.html' %}
+
+
+{% block extra_css %}
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet"/>
+
+{% endblock %}
+
+{% block content %}
+    {% include "web/components/_main.html" with title=item.name text=item.command %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <h2>All time</h2>
+            <div id="chart_div"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Last month</h2>
+            <div id="chart_div_2"></div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-6">
+            {% include "web/components/_lot_card.html" with title="First Lot" lot=first_lot %}
+        </div>
+        <div class="col-md-6">
+            {% include "web/components/_lot_card.html" with title="Last Lot" lot=last_lot %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            {% include "web/components/_lot_card.html" with title="Cheaper Lot" lot=cheaper_lot %}
+        </div>
+        <div class="col-md-6">
+            {% include "web/components/_lot_card.html" with title="More Expensive Lot" lot=more_expensive %}
+        </div>
+    </div>
+
+    {#    {% include "web/components/_lots_list.html"  %}#}
+
+{% endblock %}
+
+
+{% block extra_js %}
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <script>
+        google.charts.load('current', {packages: ['corechart', 'line']});
+        google.charts.setOnLoadCallback(drawBasic);
+
+        let x =
+        {{ data }}
+        var y = x.map((value, index, array) => {
+            return [new Date(value[0], value[1] - 1, value[2]), value[3]]
+        })
+
+        console.log(y)
+
+        function drawBasic() {
+
+            var data = new google.visualization.DataTable();
+            data.addColumn('date', 'X');
+            data.addColumn('number', 'Price');
+
+            data.addRows(
+                y
+            );
+            var options = {
+                hAxis: {
+                    title: 'Time'
+                },
+                vAxis: {
+                    title: 'Price'
+                }
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+
+            chart.draw(data, options);
+        }
+    </script>
+
+
+    <script>
+        google.charts.load('current', {packages: ['corechart', 'line']});
+        google.charts.setOnLoadCallback(drawBasic);
+
+        let x2 =
+        {{ data_last_month }}
+        var y2 = x2.map((value, index, array) => {
+            return [new Date(value[0], value[1] - 1, value[2]), value[3]]
+        })
+
+        console.log(y2)
+
+        function drawBasic() {
+
+            var data = new google.visualization.DataTable();
+            data.addColumn('date', 'X');
+            data.addColumn('number', 'Price');
+
+            data.addRows(
+                y2
+            );
+            var options = {
+                hAxis: {
+                    title: 'Time'
+                },
+                vAxis: {
+                    title: 'Price'
+                }
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById('chart_div_2'));
+
+            chart.draw(data, options);
+        }
+    </script>
+{% endblock %}

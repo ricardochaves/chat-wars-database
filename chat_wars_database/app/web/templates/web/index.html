@@ -1,0 +1,77 @@
+{% extends 'web/base.html' %}
+
+{% block extra_css %}
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet"/>
+
+{% endblock %}
+
+{% block content %}
+
+    {% include "web/components/_main.html" with title="Chat Wars Database" text="It's a Beta version." %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <form>
+                <div class="form-control">
+                    <select class="js-example-basic-single form-group form-control" name="state">
+    <option disabled selected value> -- select an option -- </option>
+
+                        {% for i in items %}
+                            <option value="{{ i.command }}">{{ i.name }}</option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+    {##}
+    {#    <div class="row">#}
+    {#        <div class="col-md-4">#}
+    {#            {% include "web/components/_lot_card.html" with title="The biggest purchase made" lot=lot %}#}
+    {##}
+    {#        </div>#}
+    {#        <div class="col-md-4">#}
+    {#            {% include "web/components/_lot_card.html" with title="First Item in Chat" lot=first_lot %}#}
+    {##}
+    {#        </div>#}
+    {##}
+    {#        <div class="col-md-4">#}
+    {#            {% include "web/components/_count_card.html" with title="Total Actived Lots" count=total_active_lots %}#}
+    {##}
+    {#        </div>#}
+    {#    </div>#}
+    {##}
+    {##}
+    {#    <div class="row">#}
+    {#        <div class="col-md-12">#}
+    {#            {% include "web/components/_lots_list.html" %}#}
+    {#        </div>#}
+    {#    </div>#}
+{% endblock %}
+
+
+{% block extra_js %}
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/js/select2.min.js"></script>
+
+    <script>
+        // In your Javascript (external .js resource or <script> tag)
+        $(document).ready(function () {
+            $('.js-example-basic-single').select2({placeholder: 'Select an item',allowClear: true,id: '-1', });
+
+            $('.js-example-basic-single').change(function (e) {
+
+                var str = "";
+                $('.js-example-basic-single option:selected').each(function () {
+                    str += $(this).val();
+                });
+
+
+                if(str){
+                window.location.href = "{{host}}/auction/item/" + str + "/";
+}
+            });
+
+        });
+    </script>
+{% endblock %}

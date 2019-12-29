@@ -1,0 +1,15 @@
+Django
+telethon
+google-cloud-pubsub
+psycopg2-binary
+gevent
+django-health-check
+python-json-logger
+request-id-django-log
+gunicorn
+whitenoise
+sentry-sdk
+django-q
+python-telegram-bot
+matplotlib
+humanfriendly
