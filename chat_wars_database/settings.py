@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "chat_wars_database.app.business_auction",
+    "chat_wars_database.app.business_exchange",
     "chat_wars_database.app.business_core",
     "chat_wars_database.app.game_bot",
     "chat_wars_database.app.web",
