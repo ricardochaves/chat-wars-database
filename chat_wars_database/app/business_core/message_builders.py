@@ -46,16 +46,16 @@ def build_lots_curiosities(data: Dict) -> str:
     message = ""
 
     if first_lot:
-        message += f"\nFirst: [Lot {first_lot.lot_id}](https://t.me/ChatWarsAuction/{first_lot.message_id})"
+        message += f"\nFirst: [Lot {first_lot.lot_id}](t.me/ChatWarsAuction/{first_lot.message_id})"
 
     if last_lot:
-        message += f"\nLast: [Lot {last_lot.lot_id}](https://t.me/ChatWarsAuction/{last_lot.message_id})"
+        message += f"\nLast: [Lot {last_lot.lot_id}](t.me/ChatWarsAuction/{last_lot.message_id})"
 
     if cheaper_lot:
-        message += f"\nCheapest: [Lot {cheaper_lot.lot_id}](https://t.me/ChatWarsAuction/{cheaper_lot.message_id}) - {cheaper_lot.price} 👝"  # pylint: disable = line-too-long # noqa
+        message += f"\nCheapest: [Lot {cheaper_lot.lot_id}](t.me/ChatWarsAuction/{cheaper_lot.message_id}) - {cheaper_lot.price} 👝"  # pylint: disable = line-too-long # noqa
 
     if more_expensive:
-        message += f"\nMost Expensive: [Lot {more_expensive.lot_id}](https://t.me/ChatWarsAuction/{more_expensive.message_id}) - {more_expensive.price} 👝"  # pylint: disable = line-too-long # noqa
+        message += f"\nMost Expensive: [Lot {more_expensive.lot_id}](t.me/ChatWarsAuction/{more_expensive.message_id}) - {more_expensive.price} 👝"  # pylint: disable = line-too-long # noqa
 
     if message:
         message = f"\nCuriosities:\n{message}\n"
