@@ -62,6 +62,10 @@ class Command(BaseCommand):
                 logger.warning("ERROR: %s", e)
                 continue
 
+            if len(data["data"]) < 2:
+                logger.warning("We dont have information about item: %s", i.name)
+                continue
+
             logger.info("Data: for item %s: %s", i.name, data)
 
             i.command = find_and_return_value(data, "ItemID")
