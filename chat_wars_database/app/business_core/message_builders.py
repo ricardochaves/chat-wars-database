@@ -27,10 +27,14 @@ Median: {data['total_week_median']}
 Average: {data['total_week_average']}
 Min/Max: {data['total_week_min']}/{data['total_week_max']}
 Unsold: {data['total_week_unsold']}/{data['total_week']}
-
-Curiosities:
 {curiosities}
-    """
+Type: {print_string(item.item_type)}
+Depositable in Guild: {print_boolean(item.depositable_in_guild)}
+Event item: {print_boolean(item.event_item)}
+Craftable: {print_boolean(item.craftable)}
+Tradeable (Exchange): {build_tradeable_exchange(item)}
+Tradeable (Auction): {print_boolean(item.tradeable_auction)}
+"""
 
 
 def build_lots_curiosities(data: Dict) -> str:
@@ -48,9 +52,30 @@ def build_lots_curiosities(data: Dict) -> str:
         message += f"\nLast: [Lot {last_lot.lot_id}](https://t.me/ChatWarsAuction/{last_lot.message_id})"
 
     if cheaper_lot:
-        message += f"\nCheaper: [Lot {cheaper_lot.lot_id}](https://t.me/ChatWarsAuction/{cheaper_lot.message_id}) - {cheaper_lot.price} 👝"  # pylint: disable = line-too-long # noqa
+        message += f"\nCheapest: [Lot {cheaper_lot.lot_id}](https://t.me/ChatWarsAuction/{cheaper_lot.message_id}) - {cheaper_lot.price} 👝"  # pylint: disable = line-too-long # noqa
 
     if more_expensive:
-        message += f"\nMore Expensive: [Lot {more_expensive.lot_id}](https://t.me/ChatWarsAuction/{more_expensive.message_id}) - {more_expensive.price} 👝"  # pylint: disable = line-too-long # noqa
+        message += f"\nMost Expensive: [Lot {more_expensive.lot_id}](https://t.me/ChatWarsAuction/{more_expensive.message_id}) - {more_expensive.price} 👝"  # pylint: disable = line-too-long # noqa
+
+    if message:
+        message = f"\nCuriosities:\n{message}\n"
 
     return message
+
+
+def build_tradeable_exchange(i: Item) -> str:
+
+    if i.tradeable_exchange:
+        return f"✅ (command /t_{i.command}"
+    else:
+        return "❌"
+
+
+def print_string(data: Optional[str]) -> str:
+
+    return data if data else ""
+
+
+def print_boolean(data: Optional[bool]) -> str:
+
+    return "✅" if data else "❌"
