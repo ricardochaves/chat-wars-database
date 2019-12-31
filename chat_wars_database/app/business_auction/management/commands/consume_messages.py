@@ -31,9 +31,10 @@ async def main(total_days: int):
 
             logger.info("Message received, id: %s, date: %s", m.id, m.date)
 
-            if m.date < timezone.now() - timedelta(days=total_days):
-                logger.info("Braking now")
-                break
+            if total_days > 0:
+                if m.date < timezone.now() - timedelta(days=total_days):
+                    logger.info("Braking now")
+                    break
 
             if "Status: Finished" in m.message:
                 data = {"message": m.message, "message_id": m.id, "message_date": m.date}
