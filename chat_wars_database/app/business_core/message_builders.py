@@ -66,7 +66,7 @@ def build_lots_curiosities(data: Dict) -> str:
 def build_tradeable_exchange(i: Item) -> str:
 
     if i.tradeable_exchange:
-        return f"✅ (command /t_{i.command}"
+        return f"✅ (command /t\_{i.command})"
     else:
         return "❌"
 

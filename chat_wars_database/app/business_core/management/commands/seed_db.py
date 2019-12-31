@@ -399,6 +399,38 @@ class Command(BaseCommand):
 
         Item.objects.bulk_create(ents)
 
+        Item.objects.create(
+            name="Potion of Rage",
+            command="r122",
+            tradeable_exchange=True,
+            tradeable_auction=False,
+            craftable=True,
+            depositable_in_guild=False,
+            event_item=True,
+            can_be_found_in_quests=False,
+            craft_command="/craft_r12",
+            mana_crafting=12,
+            skill_craft_level=1,
+            weight=2,
+            base_duration=20,
+            quest_forest_day=False,
+            quest_swamp_day=False,
+            quest_valley_day=False,
+            quest_foray_day=False,
+            quest_forest_morning=False,
+            quest_swamp_morning=True,
+            quest_valley_morning=False,
+            quest_foray_morning=False,
+            quest_forest_evening=False,
+            quest_swamp_evening=False,
+            quest_valley_evening=False,
+            quest_foray_evening=False,
+            quest_forest_night=False,
+            quest_swamp_night=False,
+            quest_valley_night=False,
+            quest_foray_night=False,
+        )
+
         AuctionLot.objects.create(
             item=Item.objects.filter(command="s07").first(),
             auction_item="Weapon",
@@ -435,6 +467,22 @@ class Command(BaseCommand):
             auction_item="Weapon",
             message_id="3",
             lot_id=123458,
+            seller_name="YYY",
+            seller_castle="Y",
+            started_price=1,
+            message_date=timezone.now() + timedelta(days=2),
+            quality=1,
+            price=10,
+            status=1,
+            real_time_end_at=timezone.now() + timedelta(days=4),
+            end_at="14 Ōstar 1065 05:32",
+        )
+
+        AuctionLot.objects.create(
+            item=Item.objects.filter(command="r122").first(),
+            auction_item="Weapon",
+            message_id="7",
+            lot_id=123459,
             seller_name="YYY",
             seller_castle="Y",
             started_price=1,
