@@ -1,3 +1,4 @@
+import logging
 from datetime import timedelta
 from statistics import mean
 from statistics import median
@@ -12,10 +13,13 @@ from chat_wars_database.app.web.db_results import get_first_lot
 from chat_wars_database.app.web.db_results import get_last_lot
 from chat_wars_database.app.web.db_results import get_more_expensive
 
+logger = logging.getLogger(__name__)
+
 
 def get_item_lot_details(item: Item) -> Dict:
 
     lots = AuctionLot.objects.filter(item=item).order_by("real_time_end_at").all()
+    logger.info("Ok, I have the lots")
 
     total_life = 0
     total_life_sold = 0
