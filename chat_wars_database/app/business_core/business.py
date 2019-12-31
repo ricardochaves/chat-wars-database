@@ -48,7 +48,7 @@ def route_command(update: Update, context: CallbackContext) -> None:  # pylint: 
 
         message = build_message(item)
 
-        logger.info("Message ok...")
+        logger.info("Message: %s", message)
 
         update.message.reply_markdown(message)
         return
