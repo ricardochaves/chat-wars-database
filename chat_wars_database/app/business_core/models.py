@@ -1,6 +1,12 @@
 from django.db import models
 
 
+class Category(models.Model):
+
+    command = models.CharField(max_length=10, blank=True, null=True)
+    name = models.CharField(max_length=200)
+
+
 class Item(models.Model):
 
     command = models.CharField(max_length=10, blank=True, null=True)
@@ -17,8 +23,14 @@ class Item(models.Model):
     mana_crafting = models.IntegerField(null=True, blank=True)
     skill_craft_level = models.IntegerField(null=True, blank=True)
     weight = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
-
     modification_date = models.DateTimeField(null=True, blank=True)
+    base_duration = models.IntegerField(null=True, blank=True)
+
+    categories = models.ManyToManyField(Category)
+
+    # PotionEffect
+    # SkillCraft
+    # Note - We can use it to ask for help and enrich the base.
 
     quest_forest_day = models.BooleanField(null=True, blank=True)
     quest_swamp_day = models.BooleanField(null=True, blank=True)
