@@ -120,7 +120,6 @@ def execute_item(item: Item) -> None:
     item.event_item = find_and_return_value(data, "BoolEventItem", False)
     item.can_be_found_in_quests = find_and_return_value(data, "BoolQuest")
     item.craft_command = find_and_return_value(data, "CraftCommand")
-    item.item_type = find_and_return_value(data, "ItemType")
     item.mana_crafting = find_and_return_value(data, "ManaCrafting")
     item.skill_craft_level = find_and_return_value(data, "SkillCraftLevel")
     item.weight = find_and_return_value(data, "Weight")

@@ -28,7 +28,6 @@ Average: {data['total_week_average']}
 Min/Max: {data['total_week_min']}/{data['total_week_max']}
 Unsold: {data['total_week_unsold']}/{data['total_week']}
 {curiosities}
-Type: {print_string(item.item_type)}
 Depositable in Guild: {print_boolean(item.depositable_in_guild)}
 Event item: {print_boolean(item.event_item)}
 Craftable: {print_boolean(item.craftable)}

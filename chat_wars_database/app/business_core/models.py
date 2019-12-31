@@ -19,7 +19,6 @@ class Item(models.Model):
     event_item = models.BooleanField(null=True, blank=True)
     can_be_found_in_quests = models.BooleanField(null=True, blank=True)
     craft_command = models.CharField(max_length=30, null=True, blank=True)
-    item_type = models.CharField(max_length=100, blank=True, null=True)
     mana_crafting = models.IntegerField(null=True, blank=True)
     skill_craft_level = models.IntegerField(null=True, blank=True)
     weight = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
