@@ -195,3 +195,6 @@ Q_CLUSTER = {
     "bulk": 10,
     "orm": "default",
 }
+
+
+UNDER_MAINTENANCE = os.getenv("UNDER_MAINTENANCE", "False").lower() in ["t", "true", "1"]

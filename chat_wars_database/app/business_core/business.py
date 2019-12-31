@@ -43,3 +43,5 @@ def route_command(update: Update, context: CallbackContext) -> None:  # pylint: 
         message = build_item_message(data, item)
         update.message.reply_markdown(message)
         return
+
+    update.message.reply_markdown("Sorry. Item not found.")

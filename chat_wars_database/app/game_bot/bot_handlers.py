@@ -101,3 +101,7 @@ def find(update: Update, context: CallbackContext):  # pylint: disable = unused-
         update.message.reply_markdown(message)
     else:
         update.message.reply_markdown("Sorry, I couldn't find anything.")
+
+
+def under_maintenance(update: Update, context: CallbackContext):  # pylint: disable = unused-argument
+    update.message.reply_markdown("We are undergoing maintenance, we will be back soon")
