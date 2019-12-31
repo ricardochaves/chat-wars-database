@@ -1,3 +1,4 @@
+import datetime
 import logging
 from time import sleep
 from typing import Dict
@@ -6,13 +7,16 @@ from typing import Union
 
 import requests
 from django.core.management import BaseCommand
+from django.utils.timezone import make_aware
 
 from chat_wars_database.app.business_core.models import Item
 
 logger = logging.getLogger(__name__)
 
 
-def find_and_return_value(item_data: Dict, key: str, default=None) -> Optional[Union[str, int, bool]]:
+def find_and_return_value(
+    item_data: Dict, key: str, default: Optional[Union[str, int, bool, datetime.datetime]] = None
+) -> Optional[Union[str, int, bool, datetime.datetime]]:
 
     for x in item_data["data"]:
         if x["property"] == key:
@@ -27,6 +31,10 @@ def find_and_return_value(item_data: Dict, key: str, default=None) -> Optional[U
 
             if x["dataitem"][0]["type"] == 1:
                 return int(x["dataitem"][0]["item"])
+
+            if x["dataitem"][0]["type"] == 6:
+                d = x["dataitem"][0]["item"].split("/")
+                return make_aware(datetime.datetime(int(d[1]), int(d[2]), int(d[3]), int(d[4]), int(d[5]), int(d[6])))
 
     return default
 
@@ -43,20 +51,19 @@ def get_item_data(item: Item) -> Dict:
 class Command(BaseCommand):
     def handle(self, *args, **options):
 
-        Item.objects.filter(command__isnull=False).update(command=None)
-
-        items = Item.objects.filter(command__isnull=True).all()
+        items = Item.objects.all()
 
         for i in items:
             sleep(2)
-
+            logger.info("Item name: %s", i.name)
             try:
                 data = get_item_data(i)
             except BaseException as e:
                 logger.warning("ERROR: %s", e)
                 continue
 
-            i.name = i.name.title()
+            logger.info("Data: for item %s: %s", i.name, data)
+
             i.command = find_and_return_value(data, "ItemID")
             i.tradeable_exchange = find_and_return_value(data, "BoolExchange", False)
             i.tradeable_auction = find_and_return_value(data, "BoolAuction", False)
@@ -69,7 +76,7 @@ class Command(BaseCommand):
             i.mana_crafting = find_and_return_value(data, "ManaCrafting")
             i.skill_craft_level = find_and_return_value(data, "SkillCraftLevel")
             i.weight = find_and_return_value(data, "Weight")
-            i.category = find_and_return_value(data, "_INST")
+            i.modification_date = find_and_return_value(data, "_MDAT")
 
             i.quest_forest_day = find_and_return_value(data, "QuestForestDay")
             i.quest_swamp_day = find_and_return_value(data, "QuestSwampDay")
