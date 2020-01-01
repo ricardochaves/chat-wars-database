@@ -37,7 +37,8 @@ def mount_item_name_for_querystring(item_name: str) -> str:
 
     n = n.replace(" ", "-20")
     n = n.replace("Of", "of")
-
+    n = n.replace("'S", "'s")
+    n = n.replace("'", "%27")
     return n
 
 

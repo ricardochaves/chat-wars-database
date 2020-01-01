@@ -63,3 +63,20 @@ class TestUpdateItems(TestCase):
         item = Item.objects.create(name="📙Scroll of Rage")
 
         execute_item(item)
+
+    def test_execute_item_should_update_all_fields_when_find_data_i4(self):
+        item = Item.objects.create(name="King's Defender blade")
+
+        execute_item(item)
+
+        item.refresh_from_db()
+
+        self.assertTrue(item.tradeable_auction)
+        self.assertTrue(item.depositable_in_guild)
+        self.assertTrue(item.can_be_found_in_quests)
+
+        self.assertFalse(item.craftable)
+        self.assertFalse(item.event_item)
+        self.assertFalse(item.tradeable_exchange)
+
+        self.assertEqual(item.command, "k23")
