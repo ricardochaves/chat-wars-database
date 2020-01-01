@@ -156,3 +156,4 @@ class Command(BaseCommand):
         for i in items:
             sleep(2)
             logger.info("Item name: %s", i.name)
+            execute_item(i)
