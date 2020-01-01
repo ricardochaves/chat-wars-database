@@ -56,7 +56,7 @@ def help_command(update: Update, context: CallbackContext):  # pylint: disable =
 /g\_k83\_25
 
 Where k83 is the Item id and 25 is the total number of days in the chart.
-Maximum time allowed is one month
+You can leave the days blank, it will take the whole story of the item.
 
 📦 **Item**
 
