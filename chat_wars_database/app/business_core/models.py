@@ -47,3 +47,6 @@ class Item(models.Model):
     quest_swamp_night = models.BooleanField(null=True, blank=True)
     quest_valley_night = models.BooleanField(null=True, blank=True)
     quest_foray_night = models.BooleanField(null=True, blank=True)
+
+    def __str__(self):
+        return self.name

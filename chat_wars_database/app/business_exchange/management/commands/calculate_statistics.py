@@ -4,13 +4,11 @@ import re
 from statistics import mean
 from statistics import median
 from typing import Dict
-from typing import Union
 
 from django.core.management import BaseCommand
 from django.utils import timezone
 
 from chat_wars_database.app.business_core.business import get_or_create_item
-from chat_wars_database.app.business_core.models import Item
 from chat_wars_database.app.business_exchange.models import ExchangeMessages
 from chat_wars_database.app.business_exchange.models import StatsByDay
 
@@ -106,10 +104,10 @@ def calculate(dt: datetime.date) -> None:
 
 class Command(BaseCommand):
     def add_arguments(self, parser):
-        parser.add_argument("stop_at", type=str)
+        parser.add_argument("total_days", type=int)  # 465 days to process all database
 
     def handle(self, *args, **options):
-        stop_at = datetime.datetime.strptime(options["stop_at"], "%Y-%m-%d").date()
+        stop_at = (datetime.datetime.now() + datetime.timedelta(days=-options["total_days"])).date()
         start_at = datetime.datetime.now().date() + datetime.timedelta(days=-1)
         logger.info("stop_at %s and start_at %s", stop_at, start_at)
 
