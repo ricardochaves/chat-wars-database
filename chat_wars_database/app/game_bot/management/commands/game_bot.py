@@ -30,7 +30,7 @@ def add_handlers(dp):
     dp.add_handler(CommandHandler("find", find))
 
     # on noncommand i.e message - echo the message on Telegram
-    dp.add_handler(MessageHandler(Filters.regex("\/g_.*?(?=_)_([1-2]\d$|[0-9]$)"), graph))
+    dp.add_handler(MessageHandler(Filters.regex("\/g_"), graph))
     dp.add_handler(MessageHandler(Filters.command, route_command))
 
 

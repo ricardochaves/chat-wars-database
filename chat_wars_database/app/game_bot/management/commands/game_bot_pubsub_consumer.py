@@ -5,7 +5,7 @@ from django.core.management import BaseCommand
 from django.db import transaction
 from google.cloud import pubsub_v1
 
-from chat_wars_database.app.game_bot.create_graph import create_graph
+from chat_wars_database.app.game_bot.graph import create_graph
 from chat_wars_database.app.game_bot.telegram_service import send_message
 from chat_wars_database.settings import GOOGLE_CLOUD_BOT_SUBSCRIPTION_NAME
 from chat_wars_database.settings import GOOGLE_CLOUD_PROJECT
