@@ -6,6 +6,7 @@ from django.utils import timezone
 
 from chat_wars_database.app.business_auction.models import AuctionLot
 from chat_wars_database.app.business_core.models import Item
+from chat_wars_database.app.business_exchange.models import ExchangeMessages
 
 
 class Command(BaseCommand):
@@ -492,4 +493,44 @@ class Command(BaseCommand):
             status=1,
             real_time_end_at=timezone.now() + timedelta(days=4),
             end_at="14 Ōstar 1065 05:32",
+        )
+
+        ExchangeMessages.objects.create(
+            message_id=1234,
+            message_date=timezone.now(),
+            message_text="""Silver ore:
+🌑Daniel => 🦌4KHunter, 5 x 1💰
+🌑Daniel => 🐉Connor Kenway, 6 x 1💰
+Thread:
+🌑Minion => 🦌Thorin, 5 x 7💰
+🌑Minion => 🦅TiTo7170, 5 x 7💰
+🌑Minion => 🦌Thorin, 4 x 7💰
+Rope:
+🐺InsertNameHere => 🦌Pirate_Warrior, 9 x 5💰
+Pelt:
+🐺Sayur Kol => 🐺Bloodhunter, 1 x 1💰""",
+        )
+
+        ExchangeMessages.objects.create(
+            message_id=1235,
+            message_date=timezone.now(),
+            message_text="""Pelt:
+🦌Medivh => 🐺Bloodhunter, 1 x 1💰
+🐺Zafit => 🐺Bloodhunter, 1 x 1💰
+Coal:
+🌑Taneleer Tivan => 🥔Malte, 1 x 1💰
+🐺GrumpyGecko => 🥔Malte, 1 x 1💰
+Cloth:
+🦈Angela => 🐺Silverstream, 1 x 1💰
+Sapphire:
+🌑Taneleer Tivan => 🥔Malte, 1 x 1💰
+🦅devi => 🥔Malte, 1 x 1💰
+Magic stone:
+🥔Moka => 🥔Malte, 1 x 31💰
+Thread:
+🌑Minion => 🦅LuluVi0, 5 x 7💰
+Bauxite:
+🐺Panfilo => 🥔Malte, 1 x 1💰
+🦅devi => 🥔Malte, 1 x 1💰
+🦌Ilvatar => 🥔Malte, 1 x 1💰""",
         )
