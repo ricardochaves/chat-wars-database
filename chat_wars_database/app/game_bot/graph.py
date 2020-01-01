@@ -115,3 +115,10 @@ def create_graph_for_exchange(item: Item, limit_date: datetime.datetime, photo_n
 
         logger.info("Saving image...")
         plt.savefig(photo_name)
+
+        try:
+            plt.clf()
+            plt.cla()
+            plt.close()
+        except BaseException:
+            pass
