@@ -60,9 +60,12 @@ class TestUpdateItems(TestCase):
         self.assertEqual(Category.objects.count(), 2)
 
     def test_execute_item_should_update_all_fields_when_find_data_i3(self):
-        item = Item.objects.create(name="📙Scroll of Rage")
+        item = Item.objects.create(name="📙Scroll of Rage", command="s07")
 
         execute_item(item)
+
+        item.refresh_from_db()
+        self.assertEqual(item.command, "s07")
 
     def test_execute_item_should_update_all_fields_when_find_data_i4(self):
         item = Item.objects.create(name="King's Defender blade")

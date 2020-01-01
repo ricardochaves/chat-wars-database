@@ -107,7 +107,7 @@ def execute_item(item: Item) -> None:
         logger.warning("ERROR: %s", e)
         return
 
-    if len(data["data"]) < 2:
+    if not find_and_return_value(data, "ItemID"):
         logger.warning("We dont have information about item: %s", item.name)
         return
 
