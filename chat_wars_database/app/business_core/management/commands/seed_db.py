@@ -7,6 +7,7 @@ from django.utils import timezone
 from chat_wars_database.app.business_auction.models import AuctionLot
 from chat_wars_database.app.business_core.models import Item
 from chat_wars_database.app.business_exchange.models import ExchangeMessages
+from chat_wars_database.app.business_exchange.models import StatsByDay
 
 
 class Command(BaseCommand):
@@ -400,6 +401,8 @@ class Command(BaseCommand):
 
         Item.objects.bulk_create(ents)
 
+        i_thead = Item.objects.create(command="01", name="Thead", tradeable_exchange=True)
+
         Item.objects.create(
             name="Potion of Rage",
             command="r122",
@@ -533,4 +536,28 @@ Bauxite:
 🐺Panfilo => 🥔Malte, 1 x 1💰
 🦅devi => 🥔Malte, 1 x 1💰
 🦌Ilvatar => 🥔Malte, 1 x 1💰""",
+        )
+
+        StatsByDay.objects.create(
+            date=timezone.now().date(),
+            item=i_thead,
+            units=10,
+            average_value=6.4,
+            mean_value=6,
+            min_value=5,
+            max_value=7,
+            deerhorn_castle_seller=0,
+            dragonscale_castle_seller=10,
+            highnest_castle_seller=0,
+            moonlight_castle_seller=0,
+            potato_castle_seller=30,
+            sharkteeth_castle_seller=0,
+            wolfpack_castle_seller=0,
+            deerhorn_castle_buyer=0,
+            dragonscale_castle_buyer=0,
+            highnest_castle_buyer=30,
+            moonlight_castle_buyer=0,
+            potato_castle_buyer=10,
+            sharkteeth_castle_buyer=0,
+            wolfpack_castle_buyer=0,
         )

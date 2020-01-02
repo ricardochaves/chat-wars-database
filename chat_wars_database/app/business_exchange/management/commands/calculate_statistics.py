@@ -42,7 +42,7 @@ def calculate(dt: datetime.date) -> None:
             else:
                 data[item_name].append(line)
 
-    for k in data.keys():
+    for k in data:
 
         item = get_or_create_item(k)
 
