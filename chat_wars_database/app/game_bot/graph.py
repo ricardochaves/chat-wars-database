@@ -3,7 +3,9 @@ import logging
 import uuid
 from datetime import timedelta
 from typing import Dict
+from typing import List
 
+import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 from django.db.models import Avg
 from django.db.models.functions import TruncDate
@@ -71,26 +73,10 @@ def create_graph_for_auction(item: Item, limit_date: datetime.datetime, photo_na
         y = []
 
         for i in items:
-            x.append(i["price__avg"])
-            y.append(i["d"])
+            y.append(i["price__avg"])
+            x.append(i["d"])
 
-        plt.ylabel("Value Prices")
-        plt.xlabel("Date")
-        plt.title(item.name)
-
-        sub = plt.subplot(111)
-        sub.bar(y, x, color=(0.2, 0.4, 0.6, 0.6))
-        sub.xaxis_date()
-
-        logger.info("Saving image...")
-        plt.savefig(photo_name)
-
-        try:
-            plt.clf()
-            plt.cla()
-            plt.close()
-        except BaseException:
-            pass
+        plot_graph(x, y, "Date", "Average Price", item.name, photo_name)
 
 
 def create_graph_for_exchange(item: Item, limit_date: datetime.datetime, photo_name: str) -> None:
@@ -102,23 +88,30 @@ def create_graph_for_exchange(item: Item, limit_date: datetime.datetime, photo_n
         y = []
 
         for i in items:
-            x.append(i.average_value)
-            y.append(i.date)
+            y.append(i.average_value)
+            x.append(i.date)
 
-        plt.ylabel("Value Prices")
-        plt.xlabel("Date")
-        plt.title(item.name)
+        plot_graph(x, y, "Date", "Average Price", item.name, photo_name)
 
-        sub = plt.subplot(111)
-        sub.bar(y, x, color=(0.2, 0.4, 0.6, 0.6))
-        sub.xaxis_date()
 
-        logger.info("Saving image...")
-        plt.savefig(photo_name)
+def plot_graph(x: List, y: List, xlabel: str, ylabel: str, title: str, file_name: str):
 
-        try:
-            plt.clf()
-            plt.cla()
-            plt.close()
-        except BaseException:
-            pass
+    fig, ax = plt.subplots(figsize=(12, 8))
+    fig.autofmt_xdate(rotation=45)
+
+    ax.bar(x, y, color="blue")
+
+    ax.set(xlabel=xlabel, ylabel=ylabel, title=title)
+
+    locator = mdates.AutoDateLocator(minticks=3, maxticks=7)
+    formatter = mdates.ConciseDateFormatter(locator)
+
+    ax.xaxis.set_major_locator(locator)
+    ax.xaxis.set_major_formatter(formatter)
+
+    logger.info("Saving image...")
+    plt.savefig(file_name)
+
+    plt.clf()
+    plt.cla()
+    plt.close()
