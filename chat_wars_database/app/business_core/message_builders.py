@@ -1,3 +1,4 @@
+from collections import Counter
 from typing import Dict
 from typing import Optional
 
@@ -5,35 +6,83 @@ from chat_wars_database.app.business_auction.models import AuctionLot
 from chat_wars_database.app.business_core.models import Item
 
 
-def build_item_message(data: Dict, item: Item) -> str:
+def _build_top_castle_seller(  # pylint: disable = too-many-arguments
+    deerhorn: int, dragonscale: int, highnest: int, moonlight: int, potato: int, sharkteeth: int, wolfpack: int
+) -> str:
+    message = ""
+    d = {"🦌": deerhorn, "🐉": dragonscale, "🦅": highnest, "🌑": moonlight, "🥔": potato, "🦈": sharkteeth, "🐺": wolfpack}
 
-    curiosities = build_lots_curiosities(data)
+    c = Counter(d)
 
-    return f"""
-{item.name} for ~ {data['total_week_median']} 👝
+    ordered_list = c.most_common()
 
-Total: {data['total_life']}
-Times sold: {data['total_life_sold']}
-Last sold: {data['last_sold']}
+    for i in ordered_list:
+        message += f"\n{i[0]} - {i[1]}"
+
+    return message
+
+
+def build_item_message_exchange(exchange_data: Dict, item: Item) -> str:
+
+    top_seller_castle_message = _build_top_castle_seller(
+        exchange_data["deerhorn_castle_seller"],
+        exchange_data["dragonscale_castle_seller"],
+        exchange_data["highnest_castle_seller"],
+        exchange_data["moonlight_castle_seller"],
+        exchange_data["potato_castle_seller"],
+        exchange_data["sharkteeth_castle_seller"],
+        exchange_data["wolfpack_castle_seller"],
+    )
+
+    top_buyer_castle_message = _build_top_castle_seller(
+        exchange_data["deerhorn_castle_buyer"],
+        exchange_data["dragonscale_castle_buyer"],
+        exchange_data["highnest_castle_buyer"],
+        exchange_data["moonlight_castle_buyer"],
+        exchange_data["potato_castle_buyer"],
+        exchange_data["sharkteeth_castle_buyer"],
+        exchange_data["wolfpack_castle_buyer"],
+    )
+
+    return f"""{item.name} for ~ {exchange_data['avg_price_30_days']} 💰
+
+All data is from the last 30 days.
+
+Most Expensive {exchange_data['max_value']}💰 on {exchange_data['max_value_date']}
+Cheapest {exchange_data['min_value']}💰 on {exchange_data['min_value_date']}
+
+Total units sold: {exchange_data['total_sold']}
+
+Total units purchased per castle:{top_buyer_castle_message}
+
+Total units sold per castle:{top_seller_castle_message}
+
+{build_general_data(item)}"""
+
+
+def build_item_message_auction(lots_data: Dict, item: Item) -> str:
+
+    curiosities = build_lots_curiosities(lots_data)
+
+    return f"""{item.name} for ~ {lots_data['total_week_median']} 👝
+
+Total: {lots_data['total_life']}
+Times sold: {lots_data['total_life_sold']}
+Last sold: {lots_data['last_sold']}
 
 All time:
-Median: {data['total_life_median']}
-Average: {data['total_life_average']}
-Min/Max: {data['total_life_min']}/{data['total_life_max']}
-Unsold: {data['total_life_unsold']}/{data['total_life']}
+Median: {lots_data['total_life_median']}
+Average: {lots_data['total_life_average']}
+Min/Max: {lots_data['total_life_min']}/{lots_data['total_life_max']}
+Unsold: {lots_data['total_life_unsold']}/{lots_data['total_life']}
 
 Last 7 days:
-Median: {data['total_week_median']}
-Average: {data['total_week_average']}
-Min/Max: {data['total_week_min']}/{data['total_week_max']}
-Unsold: {data['total_week_unsold']}/{data['total_week']}
+Median: {lots_data['total_week_median']}
+Average: {lots_data['total_week_average']}
+Min/Max: {lots_data['total_week_min']}/{lots_data['total_week_max']}
+Unsold: {lots_data['total_week_unsold']}/{lots_data['total_week']}
 {curiosities}
-Depositable in Guild: {print_boolean(item.depositable_in_guild)}
-Event item: {print_boolean(item.event_item)}
-Craftable: {print_boolean(item.craftable)}
-Tradeable (Exchange): {build_tradeable_exchange(item)}
-Tradeable (Auction): {print_boolean(item.tradeable_auction)}
-"""
+{build_general_data(item)}"""
 
 
 def build_lots_curiosities(data: Dict) -> str:
@@ -66,8 +115,8 @@ def build_tradeable_exchange(i: Item) -> str:
 
     if i.tradeable_exchange:
         return f"✅ (command /t\_{i.command})"
-    else:
-        return "❌"
+
+    return "❌"
 
 
 def print_string(data: Optional[str]) -> str:
@@ -78,3 +127,12 @@ def print_string(data: Optional[str]) -> str:
 def print_boolean(data: Optional[bool]) -> str:
 
     return "✅" if data else "❌"
+
+
+def build_general_data(item: Item) -> str:
+    return f"""Depositable in Guild: {print_boolean(item.depositable_in_guild)}
+Event item: {print_boolean(item.event_item)}
+Craftable: {print_boolean(item.craftable)}
+Tradeable (Exchange): {build_tradeable_exchange(item)}
+Tradeable (Auction): {print_boolean(item.tradeable_auction)}
+    """

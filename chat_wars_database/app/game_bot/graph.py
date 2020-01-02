@@ -94,10 +94,12 @@ def create_graph_for_exchange(item: Item, limit_date: datetime.datetime, photo_n
         plot_graph(x, y, "Date", "Average Price", item.name, photo_name)
 
 
-def plot_graph(x: List, y: List, xlabel: str, ylabel: str, title: str, file_name: str):
+def plot_graph(  # pylint: disable = too-many-arguments
+    x: List, y: List, xlabel: str, ylabel: str, title: str, file_name: str
+) -> None:
 
-    fig, ax = plt.subplots(figsize=(12, 8))
-    # fig.autofmt_xdate(rotation=45)
+    _, ax = plt.subplots(figsize=(12, 8))
+    # _.autofmt_xdate(rotation=45)
 
     ax.bar(x, y, color="blue")
 
