@@ -57,7 +57,8 @@ Total units purchased per castle:{top_buyer_castle_message}
 
 Total units sold per castle:{top_seller_castle_message}
 
-{build_general_data(item)}"""
+{build_general_data(item)}
+{build_graph_message(item)}"""
 
 
 def build_item_message_auction(lots_data: Dict, item: Item) -> str:
@@ -82,7 +83,8 @@ Average: {lots_data['total_week_average']}
 Min/Max: {lots_data['total_week_min']}/{lots_data['total_week_max']}
 Unsold: {lots_data['total_week_unsold']}/{lots_data['total_week']}
 {curiosities}
-{build_general_data(item)}"""
+{build_general_data(item)}
+{build_graph_message(item)}"""
 
 
 def build_lots_curiosities(data: Dict) -> str:
@@ -136,3 +138,9 @@ Craftable: {print_boolean(item.craftable)}
 Tradeable (Exchange): {build_tradeable_exchange(item)}
 Tradeable (Auction): {print_boolean(item.tradeable_auction)}
     """
+
+
+def build_graph_message(item: Item) -> str:
+    return f"""See the graphics: 
+Last 30 days: /g\_{item.command}\_30
+All the history: /g\_{item.command}"""
