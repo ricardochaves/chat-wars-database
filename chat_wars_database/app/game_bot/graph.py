@@ -97,7 +97,7 @@ def create_graph_for_exchange(item: Item, limit_date: datetime.datetime, photo_n
 def plot_graph(x: List, y: List, xlabel: str, ylabel: str, title: str, file_name: str):
 
     fig, ax = plt.subplots(figsize=(12, 8))
-    fig.autofmt_xdate(rotation=45)
+    # fig.autofmt_xdate(rotation=45)
 
     ax.bar(x, y, color="blue")
 
