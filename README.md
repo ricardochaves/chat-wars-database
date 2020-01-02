@@ -5,6 +5,7 @@
 ## Command List for BotFather
 
 /help - What can I do
+
 /find - Find any Item... /find gloves
 
 ## Data extraction
@@ -60,7 +61,7 @@ docker-compose run --rm web python manage.py seed_db
 
 ### Telegram Bot
 
-The @CharWarsDataBaseBot bot runs with the command:
+The @ChatWarsDataBaseBot bot runs with the command:
 
 ```bash
 docker-compose run --rm web python manage.py game_bot
