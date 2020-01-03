@@ -4,6 +4,8 @@ import re
 from statistics import mean
 from statistics import median
 from typing import Dict
+from typing import List
+from typing import Tuple
 
 from django.core.management import BaseCommand
 from django.utils import timezone
@@ -13,6 +15,39 @@ from chat_wars_database.app.business_exchange.models import ExchangeMessages
 from chat_wars_database.app.business_exchange.models import StatsByDay
 
 logger = logging.getLogger(__name__)
+
+
+def get_max_value_date(values_by_list: List[Dict]) -> Tuple[int, int]:
+    """
+    {"value": 100, "message_id": 1234]}
+    """
+
+    v = 0
+    m = 0
+
+    for x in values_by_list:
+        check = v < x["value"]
+
+        v = x["value"] if check else v
+        m = x["message_id"] if check else m
+
+    return v, m
+
+
+def get_min_value_date(values_by_list: List[Dict]) -> Tuple[int, int]:
+    """
+    {"value": 100, "message_id": 1234]}
+    """
+
+    v = values_by_list[0]["value"]
+    m = values_by_list[0]["message_id"]
+
+    for x in values_by_list:
+        check = v > x["value"]
+        v = x["value"] if check else v
+        m = x["message_id"] if check else m
+
+    return v, m
 
 
 def apply_regex_for_each_line(line: str):
@@ -40,7 +75,7 @@ def calculate(dt: datetime.date) -> None:
                     data[item_name] = []
 
             else:
-                data[item_name].append(line)
+                data[item_name].append({"line": line, "message_id": e.message_id})
 
     for k in data:
 
@@ -54,6 +89,8 @@ def calculate(dt: datetime.date) -> None:
             "mean_value": 0,
             "min_value": 0,
             "max_value": 0,
+            "min_value_message_id": 0,
+            "max_value_message_id": 0,
             "deerhorn_castle_seller": 0,
             "deerhorn_castle_buyer": 0,
             "dragonscale_castle_seller": 0,
@@ -70,13 +107,15 @@ def calculate(dt: datetime.date) -> None:
             "wolfpack_castle_buyer": 0,
         }
 
-        values_by_list = []
-        for line in data[k]:
+        values_by_list: List[Dict] = []
+        for line_dict in data[k]:
+            line = line_dict["line"]
             m = apply_regex_for_each_line(line)
 
             qtd = int(m.group("quantity"))
 
-            values_by_list.extend([int(m.group("value"))] * qtd)
+            for v in range(qtd):
+                values_by_list.append({"value": int(m.group("value")), "message_id": line_dict["message_id"]})
 
             stats_by_item["units"] += qtd
             stats_by_item["deerhorn_castle_seller"] += qtd if line[0] == "🦌" else 0
@@ -94,10 +133,17 @@ def calculate(dt: datetime.date) -> None:
             stats_by_item["wolfpack_castle_seller"] += qtd if line[0] == "🐺" else 0
             stats_by_item["wolfpack_castle_buyer"] += qtd if m.group()[3] == "🐺" else 0
 
-        stats_by_item["average_value"] = round(mean(values_by_list), 2)
-        stats_by_item["mean_value"] = median(values_by_list)
-        stats_by_item["min_value"] = min(values_by_list)
-        stats_by_item["max_value"] = max(values_by_list)
+        v, m = get_max_value_date(values_by_list)
+        stats_by_item["max_value"] = v
+        stats_by_item["max_value_message_id"] = m
+
+        v, m = get_min_value_date(values_by_list)
+        stats_by_item["min_value"] = v
+        stats_by_item["min_value_message_id"] = m
+
+        ns = [v["value"] for v in values_by_list]  # type: ignore
+        stats_by_item["average_value"] = round(mean(ns), 2)
+        stats_by_item["mean_value"] = median(ns)
 
         StatsByDay.objects.update_or_create(item=item, date=dt, defaults=stats_by_item)
 

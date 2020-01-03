@@ -4,7 +4,6 @@ from decimal import Decimal
 from django.test import TestCase
 from django.utils.timezone import make_aware
 
-from chat_wars_database.app.business_exchange.business import get_exchange_data
 from chat_wars_database.app.business_exchange.management.commands.calculate_statistics import apply_regex_for_each_line
 from chat_wars_database.app.business_exchange.management.commands.calculate_statistics import calculate
 from chat_wars_database.app.business_exchange.models import ExchangeMessages
@@ -76,6 +75,9 @@ Coal:
         self.assertEqual(st.min_value, 1)
         self.assertEqual(st.max_value, 2)
         self.assertEqual(st.units, 3)
+
+        self.assertEqual(st.min_value_message_id, 1)
+        self.assertEqual(st.max_value_message_id, 1)
 
         self.assertEqual(st.deerhorn_castle_seller, 1)
         self.assertEqual(st.deerhorn_castle_buyer, 0)
@@ -166,45 +168,23 @@ Bone:
         self.assertEqual(st.max_value, 244)
         self.assertEqual(st.units, 4)
 
-        # self.assertEqual(st.deerhorn_castle_seller, 1)
-        # self.assertEqual(st.deerhorn_castle_buyer, 0)
-        # self.assertEqual(st.dragonscale_castle_seller, 0)
-        # self.assertEqual(st.dragonscale_castle_buyer, 0)
-        # self.assertEqual(st.highnest_castle_seller, 0)
-        # self.assertEqual(st.highnest_castle_buyer, 0)
-        # self.assertEqual(st.moonlight_castle_seller, 0)
-        # self.assertEqual(st.moonlight_castle_buyer, 0)
-        # self.assertEqual(st.potato_castle_seller, 0)
-        # self.assertEqual(st.potato_castle_buyer, 0)
-        # self.assertEqual(st.sharkteeth_castle_seller, 0)
-        # self.assertEqual(st.sharkteeth_castle_buyer, 0)
-        # self.assertEqual(st.wolfpack_castle_seller, 2)
-        # self.assertEqual(st.wolfpack_castle_buyer, 3)
+        self.assertEqual(st.min_value_message_id, 2)
+        self.assertEqual(st.max_value_message_id, 1)
+
+        self.assertEqual(st.deerhorn_castle_seller, 0)
+        self.assertEqual(st.deerhorn_castle_buyer, 0)
+        self.assertEqual(st.dragonscale_castle_seller, 0)
+        self.assertEqual(st.dragonscale_castle_buyer, 1)
+        self.assertEqual(st.highnest_castle_seller, 0)
+        self.assertEqual(st.highnest_castle_buyer, 0)
+        self.assertEqual(st.moonlight_castle_seller, 0)
+        self.assertEqual(st.moonlight_castle_buyer, 0)
+        self.assertEqual(st.potato_castle_seller, 0)
+        self.assertEqual(st.potato_castle_buyer, 0)
+        self.assertEqual(st.sharkteeth_castle_seller, 0)
+        self.assertEqual(st.sharkteeth_castle_buyer, 0)
+        self.assertEqual(st.wolfpack_castle_seller, 4)
+        self.assertEqual(st.wolfpack_castle_buyer, 3)
         #
         # self.assertAlmostEquals(st.average_value, Decimal(1.33))
         # self.assertEqual(st.mean_value, 1)
-        #
-        # st: StatsByDay = StatsByDay.objects.filter(item__name="Coal").first()
-        #
-        # self.assertEqual(st.date, dt)
-        # self.assertEqual(st.min_value, 1)
-        # self.assertEqual(st.max_value, 10)
-        # self.assertEqual(st.units, 4)
-        #
-        # self.assertEqual(st.deerhorn_castle_seller, 0)
-        # self.assertEqual(st.deerhorn_castle_buyer, 0)
-        # self.assertEqual(st.dragonscale_castle_seller, 0)
-        # self.assertEqual(st.dragonscale_castle_buyer, 0)
-        # self.assertEqual(st.highnest_castle_seller, 0)
-        # self.assertEqual(st.highnest_castle_buyer, 0)
-        # self.assertEqual(st.moonlight_castle_seller, 2)
-        # self.assertEqual(st.moonlight_castle_buyer, 0)
-        # self.assertEqual(st.potato_castle_seller, 0)
-        # self.assertEqual(st.potato_castle_buyer, 4)
-        # self.assertEqual(st.sharkteeth_castle_seller, 0)
-        # self.assertEqual(st.sharkteeth_castle_buyer, 0)
-        # self.assertEqual(st.wolfpack_castle_seller, 2)
-        # self.assertEqual(st.wolfpack_castle_buyer, 0)
-        #
-        # self.assertAlmostEquals(st.average_value, Decimal(5.5))
-        # self.assertEqual(st.mean_value, 5)

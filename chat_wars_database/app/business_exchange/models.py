@@ -25,6 +25,9 @@ class StatsByDay(models.Model):
     min_value = models.IntegerField()
     max_value = models.IntegerField()
 
+    min_value_message_id = models.IntegerField(default=0)
+    max_value_message_id = models.IntegerField(default=0)
+
     deerhorn_castle_seller = models.IntegerField(default=0)
     dragonscale_castle_seller = models.IntegerField(default=0)
     highnest_castle_seller = models.IntegerField(default=0)
