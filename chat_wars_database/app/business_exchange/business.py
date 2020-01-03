@@ -29,8 +29,8 @@ def _check_max_data(max_value, dt_value, s: StatsByDay) -> Tuple[int, datetime.d
     if max_value == 0:
         return s.max_value, s.date
 
-    if max_value < s.min_value:
-        return s.min_value, s.date
+    if max_value < s.max_value:
+        return s.max_value, s.date
 
     return max_value, dt_value
 
