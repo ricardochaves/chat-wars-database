@@ -560,4 +560,6 @@ Bauxite:
             potato_castle_buyer=10,
             sharkteeth_castle_buyer=0,
             wolfpack_castle_buyer=0,
+            min_value_message_id=123,
+            max_value_message_id=456,
         )

@@ -48,8 +48,8 @@ def build_item_message_exchange(exchange_data: Dict, item: Item) -> str:
 
 All data is from the last 30 days.
 
-Most Expensive {exchange_data['max_value']}💰 on {exchange_data['max_value_date']}
-Cheapest {exchange_data['min_value']}💰 on {exchange_data['min_value_date']}
+Most Expensive {exchange_data['max_value']}💰 on {exchange_data['max_value_date']} - [Link](t.me/ChatWarsAuction/{exchange_data['max_value_message_id']})
+Cheapest {exchange_data['min_value']}💰 on {exchange_data['min_value_date']} - [Link](t.me/ChatWarsAuction/{exchange_data['min_value_message_id']})
 
 Total units sold: {exchange_data['total_sold']}
 
