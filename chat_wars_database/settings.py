@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     "chat_wars_database.app.web",
     "health_check",
     # "health_check.db",
-    "health_check.storage",
+    # "health_check.storage",
     "request_id_django_log",
     "django_q",
 ]
