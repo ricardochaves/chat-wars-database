@@ -8,6 +8,8 @@ worker_class = "gevent"
 worker_connections = int(os.getenv("GUNICORN_WORKER_CONNECTIONS", "1000"))
 timeout = int(os.getenv("GUNICORN_TIMEOUT", "30"))
 keepalive = int(os.getenv("GUNICORN_KEEP_ALIVE", "2"))
+max_requests = int(os.getenv("GUNICORN_MAX_REQUEST", "200"))
+max_requests_jitter = int(os.getenv("GUNICORN_MAX_REQUEST_JITTER", "50"))
 
 ############
 ###### http://docs.gunicorn.org/en/stable/settings.html#logging
