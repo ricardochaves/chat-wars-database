@@ -125,7 +125,7 @@ def _get_status_int(status: str) -> int:
 
 def _get_quality_int(quality) -> int:
 
-    dispatch = {"Fine": 1, "High": 2, "Great": 3, "Excellent": 4, "Masterpiece": 5, "Epic High": 6}
+    dispatch = {"Fine": 1, "High": 2, "Great": 3, "Excellent": 4, "Masterpiece": 5, "Epic High": 6, "Epic Fine": 7}
     return dispatch[quality]
 
 
