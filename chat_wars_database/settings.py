@@ -50,9 +50,8 @@ INSTALLED_APPS = [
     "chat_wars_database.app.business_core",
     "chat_wars_database.app.game_bot",
     "chat_wars_database.app.web",
+    "chat_wars_database.app.guild_helper_bot",
     "health_check",
-    # "health_check.db",
-    # "health_check.storage",
     "request_id_django_log",
     "django_q",
 ]

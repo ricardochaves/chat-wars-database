@@ -7,7 +7,7 @@ services:
       context: .
       dockerfile: DockerfileTest
     ports:
-      - "${PORT}:${PORT}"
+      - "${DJANGO_BIND_PORT}:${DJANGO_BIND_PORT}"
     env_file: .env
     volumes:
       - .:/app
@@ -27,7 +27,7 @@ services:
     command:
       [
         "./wait-for-it.sh",
-        "web:${PORT}",
+        "web:${DJANGO_BIND_PORT}",
         "-t",
         "120",
         "--",
@@ -39,6 +39,32 @@ services:
         "python",
         "manage.py",
         "game_bot",
+      ]
+  guild_helper_bot:
+    build:
+      context: .
+      dockerfile: DockerfileTest
+    env_file: .env
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - web
+    command:
+      [
+        "./wait-for-it.sh",
+        "web:${DJANGO_BIND_PORT}",
+        "-t",
+        "120",
+        "--",
+        "./wait-for-it.sh",
+        "${DB_HOST}:${DB_PORT}",
+        "-t",
+        "120",
+        "--",
+        "python",
+        "manage.py",
+        "guild_helper_bot",
       ]
   tasks:
     build:
