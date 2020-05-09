@@ -1,6 +1,7 @@
 import logging
 
 from django.core.management import BaseCommand
+from telegram.ext import CommandHandler
 from telegram.ext import Filters
 from telegram.ext import MessageHandler
 from telegram.ext import Updater
@@ -8,6 +9,7 @@ from telegram.ext import Updater
 from chat_wars_database.app.game_bot.bot_handlers import error
 from chat_wars_database.app.game_bot.bot_handlers import under_maintenance
 from chat_wars_database.app.guild_helper_bot.commands import deposit_event
+from chat_wars_database.app.guild_helper_bot.commands import report_commands
 from chat_wars_database.settings import TELEGRAM_GAME_BOT_TOKEN
 from chat_wars_database.settings import UNDER_MAINTENANCE
 
@@ -18,6 +20,10 @@ def add_handlers(dp):
     if UNDER_MAINTENANCE:
         dp.add_handler(MessageHandler(Filters.all, under_maintenance))
         return
+
+    dp.add_handler(CommandHandler("rw", report_commands))
+    dp.add_handler(CommandHandler("rm", report_commands))
+    dp.add_handler(CommandHandler("ry", report_commands))
 
     dp.add_handler(MessageHandler(Filters.text, deposit_event))
 

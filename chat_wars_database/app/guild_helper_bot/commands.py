@@ -1,9 +1,13 @@
 import logging
 import re
+from datetime import timedelta
 from typing import Dict
+from typing import List
 from typing import Tuple
 
 from django.db import transaction
+from django.db.models import Sum
+from django.utils import timezone
 from telegram import Update
 from telegram.ext import CallbackContext
 
@@ -79,5 +83,61 @@ def deposit_event(update: Update, context: CallbackContext):  # pylint: disable 
     _execute_deposit(telegram_user_data, message_data)
 
 
-# update.message.forward_date
-# update.message.forward_from.username = 'chtwrsbot'
+def _build_item_list(deposits, message) -> str:
+
+    deposits = deposits.values("item__name").order_by("item__name").annotate(count=Sum("total"))
+    message += "\n"
+    for d in deposits:
+        message += f"{d['item__name']}: {d['count']}\n"
+
+    return message
+
+
+def _execute_report(splited: List[str]) -> str:
+    message = ""
+    qr = UserDeposits.objects.all()
+
+    if splited[0] == "/rw":
+        dt = timezone.now() - timedelta(days=7)
+        qr = qr.filter(message__forward_date__gte=dt)
+        message += "What was deposited in the last 7 days.\n"
+    if splited[0] == "/rm":
+        dt = timezone.now() - timedelta(days=30)
+        qr = qr.filter(message__forward_date__gte=dt)
+        message += "What was deposited in the last 30 days.\n"
+    if splited[0] == "/ry":
+        dt = timezone.now() - timedelta(days=365)
+        qr = qr.filter(message__forward_date__gte=dt)
+        message += "What was deposited in the last 365 days.\n"
+
+    if len(splited) > 1:
+        if "@" in splited[1]:
+            user = splited[1]
+            qr = qr.filter(message__telegram_user__name=user)
+            message += f"Deposits were made by {user}.\n"
+        else:
+            item_command = splited[1]
+            qr = qr.filter(item__command__exact=item_command)
+            message += f"The report is for the item {item_command}.\n"
+
+    if len(splited) > 2:
+        if "@" in splited[2]:
+            user = splited[2]
+            qr = qr.filter(message__telegram_user__name=user)
+            message += f"Deposits were made by {user}.\n"
+        else:
+            item_command = splited[2]
+            qr = qr.filter(item__command__exact=item_command)
+            message += f"The report is for the item {item_command}.\n"
+
+    message = _build_item_list(qr, message)
+
+    return message
+
+
+def report_commands(update: Update, context: CallbackContext):  # pylint: disable = unused-argument
+
+    splited = update.message.text.split(" ")
+    message = _execute_report(splited)
+    context.bot.sendMessage(update.message.chat_id, message)
+    return
