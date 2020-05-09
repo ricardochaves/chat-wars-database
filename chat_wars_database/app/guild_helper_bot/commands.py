@@ -170,7 +170,7 @@ def _execute_week_command(splited) -> str:
 
     message = f"Summary of deposits last 7 days: {item.name}\n\n"
     for d in deposits:
-        message += f"{d['telegram_user__name'].replace('@', '')}     {d['count']}"
+        message += f"{d['telegram_user__name'].replace('@', '')}     {d['count']}\n"
 
     return message
 
