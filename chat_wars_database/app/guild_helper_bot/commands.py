@@ -12,6 +12,7 @@ from telegram import Update
 from telegram.ext import CallbackContext
 
 from chat_wars_database.app.business_core.business import get_or_create_item
+from chat_wars_database.app.business_core.models import Item
 from chat_wars_database.app.guild_helper_bot.models import Message
 from chat_wars_database.app.guild_helper_bot.models import TelegramUser
 from chat_wars_database.app.guild_helper_bot.models import UserDeposits
@@ -154,3 +155,32 @@ def report_commands(update: Update, context: CallbackContext):  # pylint: disabl
     message = _execute_report(splited)
     context.bot.sendMessage(update.message.chat_id, message)
     return
+
+
+def _execute_week_command(splited) -> str:
+    dt = timezone.now() - timedelta(days=7)
+
+    item = Item.objects.filter(command=splited[1]).first()
+    deposits = (
+        UserDeposits.objects.filter(message__forward_date__gte=dt, item=item)
+        .values("telegram_user__name")
+        .order_by("telegram_user__name")
+        .annotate(count=Sum("total"))
+    )
+
+    message = f"Summary of deposits last 7 days: {item.name}\n\n"
+    for d in deposits:
+        message += f"{d['telegram_user__name'].replace('@', '')}     {d['count']}"
+
+    return message
+
+
+def week_commands(update: Update, context: CallbackContext):  # pylint: disable = unused-argument
+
+    splited = update.message.text.split(" ")
+    if len(splited) == 1:
+        context.bot.sendMessage(update.message.chat_id, "You need pass one item id: /week 13")
+        return
+
+    message = _execute_week_command(splited)
+    context.bot.sendMessage(update.message.chat_id, message)
