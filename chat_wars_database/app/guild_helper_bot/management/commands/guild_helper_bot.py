@@ -1,17 +1,11 @@
 import logging
 
 from django.core.management import BaseCommand
-from telegram.ext import CommandHandler
 from telegram.ext import Filters
 from telegram.ext import MessageHandler
 from telegram.ext import Updater
 
-from chat_wars_database.app.business_core.business import route_command
 from chat_wars_database.app.game_bot.bot_handlers import error
-from chat_wars_database.app.game_bot.bot_handlers import find
-from chat_wars_database.app.game_bot.bot_handlers import graph
-from chat_wars_database.app.game_bot.bot_handlers import help_command
-from chat_wars_database.app.game_bot.bot_handlers import start
 from chat_wars_database.app.game_bot.bot_handlers import under_maintenance
 from chat_wars_database.app.guild_helper_bot.commands import deposit_event
 from chat_wars_database.settings import TELEGRAM_GAME_BOT_TOKEN
@@ -25,13 +19,6 @@ def add_handlers(dp):
         dp.add_handler(MessageHandler(Filters.all, under_maintenance))
         return
 
-    # on different commands - answer in Telegram
-    # dp.add_handler(CommandHandler("start", start))
-    # dp.add_handler(CommandHandler("help", help_command))
-    # dp.add_handler(CommandHandler("find", find))
-    #
-    # # on noncommand i.e message - echo the message on Telegram
-    # dp.add_handler(MessageHandler(Filters.regex("\/g_"), graph))
     dp.add_handler(MessageHandler(Filters.text, deposit_event))
 
 
@@ -56,6 +43,7 @@ def main():
     # Run the bot until you press Ctrl-C or the process receives SIGINT,
     # SIGTERM or SIGABRT. This should be used most of the time, since
     # start_polling() is non-blocking and will stop the bot gracefully.
+    logger.info("Listening...")
     updater.idle()
 
 
