@@ -34,7 +34,7 @@ def help_command(update: Update, context: CallbackContext):  # pylint: disable =
 
 
 def _get_name_and_qtd(message: str) -> Tuple[str, int]:
-    regex = "Deposited successfully: (.*) \((\d)\)"
+    regex = "Deposited successfully: (.*) \((\d*)\)"
     m = re.search(regex, message)
     item_name = m.group(1)  # type: ignore
     item_qtd = int(m.group(2))  # type: ignore

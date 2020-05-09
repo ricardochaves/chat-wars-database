@@ -33,3 +33,19 @@ class TestDepositEvent(TestCase):
 
         self.assertEqual(Message.objects.count(), 2)
         self.assertEqual(UserDeposits.objects.count(), 2)
+
+        message_data = {
+            "chat_id": 8765432,
+            "forward_date": timezone.now(),
+            "message_text": "Deposited successfully: Silver ore (281)",
+            "message_id": 12345676543,
+        }
+
+        _execute_deposit(telegram_user_data, message_data)
+
+        self.assertEqual(Message.objects.count(), 3)
+        self.assertEqual(UserDeposits.objects.count(), 3)
+
+        u = UserDeposits.objects.filter(item__name__exact="Silver ore").first()
+
+        self.assertEqual(u.total, 281)
