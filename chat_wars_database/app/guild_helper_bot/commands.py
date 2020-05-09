@@ -19,6 +19,19 @@ from chat_wars_database.app.guild_helper_bot.models import UserDeposits
 logger = logging.getLogger(__name__)
 
 
+def help_command(update: Update, context: CallbackContext):  # pylint: disable = unused-argument
+    message = """
+    Reports:
+    /rw - It will take data from the last 7 days.
+    /rm - It will take data from the last 30 days.
+    /ry - It will take data from the last 365 days.
+    
+    You can pass the item id or the user to filter the result:
+    /rw 13 @ricardobchaves - The total amount of Magic Stones that the user @ricardobchaves deposited in the last week will return.
+    """
+    update.message.reply_markdown(message)
+
+
 def _get_name_and_qtd(message: str) -> Tuple[str, int]:
     regex = "Deposited successfully: (.*) \((\d)\)"
     m = re.search(regex, message)

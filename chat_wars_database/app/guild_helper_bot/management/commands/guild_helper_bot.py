@@ -9,6 +9,7 @@ from telegram.ext import Updater
 from chat_wars_database.app.game_bot.bot_handlers import error
 from chat_wars_database.app.game_bot.bot_handlers import under_maintenance
 from chat_wars_database.app.guild_helper_bot.commands import deposit_event
+from chat_wars_database.app.guild_helper_bot.commands import help_command
 from chat_wars_database.app.guild_helper_bot.commands import report_commands
 from chat_wars_database.settings import TELEGRAM_GAME_BOT_TOKEN
 from chat_wars_database.settings import UNDER_MAINTENANCE
@@ -24,6 +25,7 @@ def add_handlers(dp):
     dp.add_handler(CommandHandler("rw", report_commands))
     dp.add_handler(CommandHandler("rm", report_commands))
     dp.add_handler(CommandHandler("ry", report_commands))
+    dp.add_handler(CommandHandler("guild_help", help_command))
 
     dp.add_handler(MessageHandler(Filters.text, deposit_event))
 
