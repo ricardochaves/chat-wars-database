@@ -29,8 +29,16 @@ def help_command(update: Update, context: CallbackContext):  # pylint: disable =
     
     You can pass the item id or the user to filter the result:
     /rw 13 @ricardobchaves - The total amount of Magic Stones that the user @ricardobchaves deposited in the last week will return.
+    
+    /week item_id - It will return the total items deposited in the last 7 days grouped by player.
     """
-    update.message.reply_markdown(message)
+    if update.effective_message.chat.type != "private":
+        update.message.reply_markdown(
+            "Please [message me privately](http://t.me/ch_guild_helper_bot) for a list of commands."
+        )
+        return
+
+    update.message.reply_text(message)
 
 
 def _get_name_and_qtd(message: str) -> Tuple[str, int]:

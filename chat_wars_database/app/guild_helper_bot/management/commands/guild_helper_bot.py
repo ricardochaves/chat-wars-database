@@ -27,7 +27,7 @@ def add_handlers(dp):
     dp.add_handler(CommandHandler("rm", report_commands))
     dp.add_handler(CommandHandler("ry", report_commands))
     dp.add_handler(CommandHandler("week", week_commands))
-    dp.add_handler(CommandHandler("guild_help", help_command))
+    dp.add_handler(CommandHandler("help", help_command))
 
     dp.add_handler(MessageHandler(Filters.text, deposit_event))
 
