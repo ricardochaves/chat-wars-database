@@ -35,6 +35,10 @@ def mount_item_name_for_querystring(item_name: str) -> str:
         n = n.replace("📘", "")
         n += " (Blue)"
 
+    if "📒" in n:
+        n = n.replace("📒", "")
+        n += " (Yellow)"
+
     n = n.replace(" ", "-20")
     n = n.replace("Of", "of")
     n = n.replace("'S", "'s")
