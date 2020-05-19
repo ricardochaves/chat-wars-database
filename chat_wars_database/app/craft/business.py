@@ -52,12 +52,12 @@ def update_all_crafted_items():
 
 
 def get_recipes(item: Item, message: str, spaces: str = "") -> str:
-    recipes = Recipe.objects.filter(item=item).all()
+    recipes = Recipe.objects.filter(item=item).order_by("ingredient__craftable").all()
 
     for r in recipes:
         message += f"{spaces}{r.amount} x {r.ingredient.name}\n"
         if r.ingredient.craftable:
-            get_recipes(r.ingredient, message, spaces + SPACES_FOR_CRAFT_MESSAGE)
+            message += get_recipes(r.ingredient, message, spaces + SPACES_FOR_CRAFT_MESSAGE)
 
     return message
 
