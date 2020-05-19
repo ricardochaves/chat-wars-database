@@ -9,7 +9,7 @@ from chat_wars_database.app.business_core.models import Recipe
 
 logger = logging.getLogger(__name__)
 
-SPACES_FOR_CRAFT_MESSAGE = "    "
+SPACES_FOR_CRAFT_MESSAGE = "  "
 
 
 def update_recipe_item(item: Item) -> None:
@@ -57,7 +57,7 @@ def get_recipes(item: Item, message: str, spaces: str = "") -> str:
     for r in recipes:
         message += f"{spaces}{r.amount} x {r.ingredient.name}\n"
         if r.ingredient.craftable:
-            message += get_recipes(r.ingredient, message, spaces + SPACES_FOR_CRAFT_MESSAGE)
+            message = get_recipes(r.ingredient, message, spaces + SPACES_FOR_CRAFT_MESSAGE)
 
     return message
 

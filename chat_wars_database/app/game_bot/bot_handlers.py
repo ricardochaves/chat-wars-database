@@ -131,4 +131,5 @@ def craft_command(update: Update, context: CallbackContext):  # pylint: disable 
 
     item_command = update.message.text.split("_")[1]
     message = create_message(item_command)
+    message = (message[:4092] + "`...") if len(message) > 4096 else message
     update.message.reply_markdown(message)
