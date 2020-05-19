@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "chat_wars_database.app.game_bot",
     "chat_wars_database.app.web",
     "chat_wars_database.app.guild_helper_bot",
+    "chat_wars_database.app.craft",
     "health_check",
     "request_id_django_log",
     "django_q",

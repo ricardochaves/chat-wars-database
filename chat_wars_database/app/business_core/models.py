@@ -50,3 +50,14 @@ class Item(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Recipe(models.Model):
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="item")
+    ingredient = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="ingredient")
+    amount = models.IntegerField()
+
+    def __str__(self):
+        return self.item.name

@@ -7,6 +7,7 @@ from telegram.ext import MessageHandler
 from telegram.ext import Updater
 
 from chat_wars_database.app.business_core.business import route_command
+from chat_wars_database.app.game_bot.bot_handlers import craft_command
 from chat_wars_database.app.game_bot.bot_handlers import error
 from chat_wars_database.app.game_bot.bot_handlers import find
 from chat_wars_database.app.game_bot.bot_handlers import graph
@@ -31,6 +32,7 @@ def add_handlers(dp):
 
     # on noncommand i.e message - echo the message on Telegram
     dp.add_handler(MessageHandler(Filters.regex("\/g_"), graph))
+    dp.add_handler(MessageHandler(Filters.regex("\/craft_"), craft_command))
     dp.add_handler(MessageHandler(Filters.command, route_command))
 
 

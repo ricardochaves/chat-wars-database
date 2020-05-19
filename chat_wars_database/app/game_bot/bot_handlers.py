@@ -4,6 +4,7 @@ from telegram import Update
 from telegram.ext import CallbackContext
 
 from chat_wars_database.app.business_core.models import Item
+from chat_wars_database.app.craft.business import create_message
 from chat_wars_database.app.game_bot.graph import send_graph_message
 from chat_wars_database.app.setup.help_conn import close_connections
 
@@ -65,6 +66,18 @@ You can leave the days blank, it will take the whole story of the item.
 Where k83 is the Item id. Currently all items from Boris and Co, ltd are available.
 The next step is to add all Chat Wars items: Stock Exchange Deals
 
+⚙️ **craft**
+
+/craft\_28
+
+It will return the list of items and quantities to make that item.
+
+🔍 **find**
+
+/find armor
+
+It will return any item that has this text in the name
+
 🚧 **About the project**
 
 This project is OpenSource and can be found at [GitHub](https://github.com/ricardochaves/chat-wars-database).
@@ -112,3 +125,10 @@ def find(update: Update, context: CallbackContext):  # pylint: disable = unused-
 
 def under_maintenance(update: Update, context: CallbackContext):  # pylint: disable = unused-argument
     update.message.reply_markdown("We are undergoing maintenance, we will be back soon")
+
+
+def craft_command(update: Update, context: CallbackContext):  # pylint: disable = unused-argument
+
+    item_command = update.message.text.split("_")[1]
+    message = create_message(item_command)
+    update.message.reply_markdown(message)
