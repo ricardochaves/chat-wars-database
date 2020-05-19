@@ -131,11 +131,4 @@ def craft_command(update: Update, context: CallbackContext):  # pylint: disable 
 
     item_command = update.message.text.split("_")[1]
     message = create_message(item_command)
-    message = """'Recipe for Silver mold updated at May 19 2020
-
-`1 x Silver mold
-    2 x String
-    2 x Silver Ore
-    2 x Coke`
-"""
     update.message.reply_markdown(message)
