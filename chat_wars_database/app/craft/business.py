@@ -9,6 +9,8 @@ from chat_wars_database.app.business_core.models import Recipe
 
 logger = logging.getLogger(__name__)
 
+SPACES_FOR_CRAFT_MESSAGE = "    "
+
 
 def update_recipe_item(item: Item) -> None:
 
@@ -22,7 +24,7 @@ def update_recipe_item(item: Item) -> None:
                 item_name = d["dataitem"][0]["item"].split("#")[0].replace("_", " ").lower()
                 it = Item.objects.filter(name__iexact=item_name).first()
                 if not it:
-                    raise Exception("Item not found.")
+                    raise Exception(f"Item not found. Name: {item_name}")
             if d["property"] == "Qty":
                 qtd = int(d["dataitem"][0]["item"])
 
@@ -53,9 +55,9 @@ def get_recipes(item: Item, message: str, spaces: str = "") -> str:
     recipes = Recipe.objects.filter(item=item).all()
 
     for r in recipes:
-        message += f"{r.amount} x {r.ingredient.name}\n"
+        message += f"{spaces}{r.amount} x {r.ingredient.name}\n"
         if r.ingredient.craftable:
-            get_recipes(r.ingredient, message, spaces + "  ")
+            get_recipes(r.ingredient, message, spaces + SPACES_FOR_CRAFT_MESSAGE)
 
     return message
 
@@ -73,6 +75,6 @@ def create_message(item_command: str) -> str:
 
     message = f"Recipe for {item.name} updated at {dt}\n\n"
     message += f"1 x {item.name}\n"
-    message = get_recipes(item, message, "  ")
+    message = get_recipes(item, message, SPACES_FOR_CRAFT_MESSAGE)
 
     return message
