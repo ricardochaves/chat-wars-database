@@ -74,7 +74,7 @@ def create_message(item_command: str) -> str:
     dt = recipe.created_at.strftime("%b %d %Y")
 
     message = f"Recipe for {item.name} updated at {dt}\n\n"
-    message += f"1 x {item.name}\n"
+    message += f"`1 x {item.name}\n"
     message = get_recipes(item, message, SPACES_FOR_CRAFT_MESSAGE)
-
+    message += "`"
     return message
