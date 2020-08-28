@@ -46,7 +46,7 @@ def inject_telegram_user(func):
         # char = Character.objects.filter(player__telegram_id=user_id).first()
 
         telegram_user = create_telegram_user_if_need(
-            update.effective_user.id, update.effective_user.id, update.effective_user.id
+            update.effective_user.id, update.effective_user.name, update.effective_user.username
         )
 
         # if not char:
