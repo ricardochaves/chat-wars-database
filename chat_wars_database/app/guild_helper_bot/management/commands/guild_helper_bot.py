@@ -4,13 +4,23 @@ from django.core.management import BaseCommand
 from telegram.ext import CommandHandler
 from telegram.ext import Filters
 from telegram.ext import MessageHandler
+from telegram.ext import RegexHandler
 from telegram.ext import Updater
 
 from chat_wars_database.app.game_bot.bot_handlers import error
 from chat_wars_database.app.game_bot.bot_handlers import under_maintenance
+from chat_wars_database.app.guild_helper_bot.business.commands import telegram_command_create_guild
+from chat_wars_database.app.guild_helper_bot.business.commands import telegram_command_create_invite_member_link
+from chat_wars_database.app.guild_helper_bot.business.commands import telegram_command_guild_info
+from chat_wars_database.app.guild_helper_bot.business.commands import telegram_command_leave_guild
+from chat_wars_database.app.guild_helper_bot.business.commands import telegram_command_update_guild_name
+from chat_wars_database.app.guild_helper_bot.business.commands import telegram_command_use_invited_id_link
+from chat_wars_database.app.guild_helper_bot.business.commands import telegram_command_use_leave_guild
 from chat_wars_database.app.guild_helper_bot.commands import deposit_event
 from chat_wars_database.app.guild_helper_bot.commands import help_command
 from chat_wars_database.app.guild_helper_bot.commands import report_commands
+from chat_wars_database.app.guild_helper_bot.commands import squad_command
+from chat_wars_database.app.guild_helper_bot.commands import start_command
 from chat_wars_database.app.guild_helper_bot.commands import week_commands
 from chat_wars_database.settings import TELEGRAM_GAME_BOT_TOKEN
 from chat_wars_database.settings import UNDER_MAINTENANCE
@@ -28,7 +38,16 @@ def add_handlers(dp):
     dp.add_handler(CommandHandler("ry", report_commands))
     dp.add_handler(CommandHandler("week", week_commands))
     dp.add_handler(CommandHandler("help", help_command))
+    dp.add_handler(CommandHandler("start", start_command))
+    dp.add_handler(CommandHandler("create_guild", telegram_command_create_guild))
+    dp.add_handler(CommandHandler("leave_guild", telegram_command_leave_guild))
+    dp.add_handler(CommandHandler("update_guild_name", telegram_command_update_guild_name))
+    dp.add_handler(CommandHandler("create_invite_member_link", telegram_command_create_invite_member_link))
+    dp.add_handler(CommandHandler("guild_info", telegram_command_guild_info))
 
+    dp.add_handler(RegexHandler("use_link_.*", telegram_command_use_invited_id_link))
+    dp.add_handler(RegexHandler("leave_guild_\d*", telegram_command_use_leave_guild))
+    # dp.add_handler(MessageHandler("⚜️Squad", squad_command))
     dp.add_handler(MessageHandler(Filters.text, deposit_event))
 
 
@@ -60,3 +79,6 @@ def main():
 class Command(BaseCommand):
     def handle(self, *args, **options):
         main()
+
+
+main()

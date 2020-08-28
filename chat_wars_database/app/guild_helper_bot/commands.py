@@ -13,6 +13,10 @@ from telegram.ext import CallbackContext
 
 from chat_wars_database.app.business_core.business import get_or_create_item
 from chat_wars_database.app.business_core.models import Item
+from chat_wars_database.app.guild_helper_bot.business.guild import get_guild_from_user
+from chat_wars_database.app.guild_helper_bot.business.telegram_user import create_telegram_user_if_need
+from chat_wars_database.app.guild_helper_bot.decorators import inject_telegram_user
+from chat_wars_database.app.guild_helper_bot.models import Guild
 from chat_wars_database.app.guild_helper_bot.models import Message
 from chat_wars_database.app.guild_helper_bot.models import TelegramUser
 from chat_wars_database.app.guild_helper_bot.models import UserDeposits
@@ -115,40 +119,40 @@ def _build_item_list(deposits, message) -> str:
     return message
 
 
-def _execute_report(splited: List[str]) -> str:
+def _execute_report(splitted: List[str], guild: Guild) -> str:
     message = ""
-    qr = UserDeposits.objects.all()
+    qr = UserDeposits.objects.filter(telegram_user__guild=guild).all()
 
-    if splited[0] == "/rw":
+    if splitted[0] == "/rw":
         dt = timezone.now() - timedelta(days=7)
         qr = qr.filter(message__forward_date__gte=dt)
         message += "What was deposited in the last 7 days.\n"
-    if splited[0] == "/rm":
+    if splitted[0] == "/rm":
         dt = timezone.now() - timedelta(days=30)
         qr = qr.filter(message__forward_date__gte=dt)
         message += "What was deposited in the last 30 days.\n"
-    if splited[0] == "/ry":
+    if splitted[0] == "/ry":
         dt = timezone.now() - timedelta(days=365)
         qr = qr.filter(message__forward_date__gte=dt)
         message += "What was deposited in the last 365 days.\n"
 
-    if len(splited) > 1:
-        if "@" in splited[1]:
-            user = splited[1]
+    if len(splitted) > 1:
+        if "@" in splitted[1]:
+            user = splitted[1]
             qr = qr.filter(message__telegram_user__name=user)
             message += f"Deposits were made by {user}.\n"
         else:
-            item_command = splited[1]
+            item_command = splitted[1]
             qr = qr.filter(item__command__exact=item_command)
             message += f"The report is for the item {item_command}.\n"
 
-    if len(splited) > 2:
-        if "@" in splited[2]:
-            user = splited[2]
+    if len(splitted) > 2:
+        if "@" in splitted[2]:
+            user = splitted[2]
             qr = qr.filter(message__telegram_user__name=user)
             message += f"Deposits were made by {user}.\n"
         else:
-            item_command = splited[2]
+            item_command = splitted[2]
             qr = qr.filter(item__command__exact=item_command)
             message += f"The report is for the item {item_command}.\n"
 
@@ -157,20 +161,23 @@ def _execute_report(splited: List[str]) -> str:
     return message
 
 
-def report_commands(update: Update, context: CallbackContext):  # pylint: disable = unused-argument
+@inject_telegram_user
+def report_commands(
+    update: Update, context: CallbackContext, telegram_user: TelegramUser
+):  # pylint: disable = unused-argument
 
     splited = update.message.text.split(" ")
-    message = _execute_report(splited)
+    message = _execute_report(splited, telegram_user.guild)
     context.bot.sendMessage(update.message.chat_id, message)
     return
 
 
-def _execute_week_command(splited) -> str:
+def _execute_week_command(splitted, guild: Guild) -> str:
     dt = timezone.now() - timedelta(days=7)
 
-    item = Item.objects.filter(command=splited[1]).first()
+    item = Item.objects.filter(command=splitted[1]).first()
     deposits = (
-        UserDeposits.objects.filter(message__forward_date__gte=dt, item=item)
+        UserDeposits.objects.filter(message__forward_date__gte=dt, item=item, telegram_user__guild=guild)
         .values("telegram_user__name")
         .order_by("telegram_user__name")
         .annotate(count=Sum("total"))
@@ -183,12 +190,44 @@ def _execute_week_command(splited) -> str:
     return message
 
 
-def week_commands(update: Update, context: CallbackContext):  # pylint: disable = unused-argument
+@inject_telegram_user
+def week_commands(
+    update: Update, context: CallbackContext, telegram_user: TelegramUser
+):  # pylint: disable = unused-argument
 
-    splited = update.message.text.split(" ")
-    if len(splited) == 1:
+    splitted = update.message.text.split(" ")
+    if len(splitted) == 1:
         context.bot.sendMessage(update.message.chat_id, "You need pass one item id: /week 13")
         return
 
-    message = _execute_week_command(splited)
+    message = _execute_week_command(splitted, telegram_user.guild)
     context.bot.sendMessage(update.message.chat_id, message)
+
+
+def start_command(update: Update, context: CallbackContext):  # pylint: disable = unused-argument
+    if update.effective_message.chat.type != "private":
+        update.message.reply_markdown(
+            "Please [message me privately](http://t.me/ch_guild_helper_bot) to start at the bot."
+        )
+        return
+
+    create_telegram_user_if_need(update.effective_user.id, update.effective_user.name, update.effective_user.username)
+    help_command(update, context)
+
+
+def squad_command(update: Update, context: CallbackContext):  # pylint: disable = unused-argument
+    if update.effective_message.chat.type != "private":
+        return
+
+    guild = get_guild_from_user(update.effective_user.id)
+    if not guild:
+        update.message.message_text("You dont have a guild")
+        return
+
+    update.message.message_text(
+        f"""⚜️ Squad ⚜️
+{guild.name}
+Captain: {guild.captain.name}
+Squad link: {guild.link}
+"""
+    )

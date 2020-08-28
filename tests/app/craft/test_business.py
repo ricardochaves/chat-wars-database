@@ -1,4 +1,5 @@
 from django.test import TestCase
+from freezegun import freeze_time
 
 from chat_wars_database.app.business_core.models import Item
 from chat_wars_database.app.business_core.models import Recipe
@@ -41,7 +42,9 @@ class TestCraftBusiness(TestCase):
         self.assertIsNotNone(r_4)
         self.assertEqual(r_4.amount, 1)
 
+    @freeze_time("2020-05-19T01:17:48.459595")
     def test_create_message(self):
+
         update_all_crafted_items()
         expected_message = """Recipe for Blacksmith frame updated at May 19 2020
 

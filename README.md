@@ -8,6 +8,8 @@
 
 /find - Find any Item... /find gloves
 
+/craft_id - Show all items to make the item
+
 ## Data extraction
 
 There is a Django command that extracts all messages from Telegram channels.

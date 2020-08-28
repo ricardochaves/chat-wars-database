@@ -3,6 +3,7 @@
 python manage.py makemigrations
 python manage.py migrate
 python manage.py seed_db
+python manage.py guild_seed_db
 python manage.py collectstatic --noinput
 
 #python manage.py runserver 0.0.0.0:5005

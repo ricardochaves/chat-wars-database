@@ -198,3 +198,5 @@ Q_CLUSTER = {
 
 
 UNDER_MAINTENANCE = os.getenv("UNDER_MAINTENANCE", "False").lower() in ["t", "true", "1"]
+
+BOT_CLOSE_CONNECTIONS = True

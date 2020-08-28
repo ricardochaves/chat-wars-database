@@ -1,0 +1,2 @@
+class CaptainCantLeaveTheGuild(Exception):
+    pass
