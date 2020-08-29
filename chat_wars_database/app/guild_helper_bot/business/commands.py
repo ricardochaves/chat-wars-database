@@ -2,6 +2,7 @@ from django.db import IntegrityError
 from telegram import Update
 from telegram.ext import CallbackContext
 
+from chat_wars_database.app.guild_helper_bot.business.alliance import alliance_info
 from chat_wars_database.app.guild_helper_bot.business.guild import create_guild
 from chat_wars_database.app.guild_helper_bot.business.guild import create_invite_member_link
 from chat_wars_database.app.guild_helper_bot.business.guild import guild_info
@@ -12,6 +13,7 @@ from chat_wars_database.app.guild_helper_bot.business.guild import use_invited_i
 from chat_wars_database.app.guild_helper_bot.decorators import inject_telegram_user
 from chat_wars_database.app.guild_helper_bot.decorators import just_for_private_chat
 from chat_wars_database.app.guild_helper_bot.exceptions import CaptainCantLeaveTheGuild
+from chat_wars_database.app.guild_helper_bot.models import Alliance
 from chat_wars_database.app.guild_helper_bot.models import Guild
 from chat_wars_database.app.guild_helper_bot.models import TelegramUser
 from chat_wars_database.app.guild_helper_bot.models import UserGuild
@@ -31,18 +33,21 @@ def telegram_command_create_guild(update: Update, context: CallbackContext, tele
     update.message.reply_html(message)
 
 
+@just_for_private_chat
 @inject_telegram_user
 def telegram_command_leave_guild(update: Update, context: CallbackContext, telegram_user: TelegramUser):
     message = command_leave_guild(telegram_user)
     update.message.reply_html(message)
 
 
+@just_for_private_chat
 @inject_telegram_user
 def telegram_command_use_leave_guild(update: Update, context: CallbackContext, telegram_user: TelegramUser):
     message = command_use_leave_guild(telegram_user, update.effective_message.text.replace("/", ""))
     update.message.reply_html(message)
 
 
+@just_for_private_chat
 @inject_telegram_user
 def telegram_command_update_guild_name(update: Update, context: CallbackContext, telegram_user: TelegramUser):
     split_command = update.effective_message.text.split(" ")
@@ -57,12 +62,14 @@ def telegram_command_update_guild_name(update: Update, context: CallbackContext,
     update.message.reply_html(message)
 
 
+@just_for_private_chat
 @inject_telegram_user
 def telegram_command_create_invite_member_link(update: Update, context: CallbackContext, telegram_user: TelegramUser):
     message = command_create_invite_member_link(telegram_user)
     update.message.reply_html(message)
 
 
+@just_for_private_chat
 @inject_telegram_user
 def telegram_command_use_invited_id_link(update: Update, context: CallbackContext, telegram_user: TelegramUser):
     split_command = update.effective_message.text.split("_")
@@ -75,6 +82,7 @@ def telegram_command_use_invited_id_link(update: Update, context: CallbackContex
     update.message.reply_html(message)
 
 
+@just_for_private_chat
 @inject_telegram_user
 def telegram_command_guild_info(update: Update, context: CallbackContext, telegram_user: TelegramUser):
     message = command_guild_info(telegram_user)
@@ -146,3 +154,31 @@ def command_create_invite_member_link(telegram_user: TelegramUser) -> str:
     link = create_invite_member_link(telegram_user)
     return f"""{telegram_user.name}  is inviting you to the guild {telegram_user.guild.name}.
 Send this link /use_link_{link.link_id} message to @ch_guild_helper_bot to join the guild"""
+
+
+@just_for_private_chat
+@inject_telegram_user
+def telegram_command_alliance_info(update: Update, context: CallbackContext, telegram_user: TelegramUser):
+    message = command_alliance_info(telegram_user)
+    update.message.reply_html(message)
+
+
+def command_alliance_info(telegram_user: TelegramUser) -> str:
+
+    try:
+        alliance = alliance_info(telegram_user)
+        if not alliance:
+            return "Your guild does not have an alliance"
+
+        guilds_count = alliance.guild_set.count()
+        guilds = alliance.guild_set.all()
+        total_members = 0
+        for g in guilds:
+            total_members += g.userguild_set.count()
+
+        return f"""{alliance.name}
+Guilds: {guilds_count} 👥 {total_members}
+Owner: {alliance.owner}"""
+
+    except UserGuild.DoesNotExist:
+        return f"You don't have any guild. Use /create_guild <name>"
