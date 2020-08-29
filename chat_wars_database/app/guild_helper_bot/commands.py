@@ -316,9 +316,14 @@ def command_locations(
 
 
 def _get_locations_and_build_message(telegram_user: TelegramUser) -> str:
-    all_hidden_location = (
-        HiddenLocation.objects.filter(telegram_user__guild=telegram_user.guild).order_by("-created_at").all()
-    )
+    try:
+        all_hidden_location = (
+            HiddenLocation.objects.filter(telegram_user__guild__alliance=telegram_user.guild)
+            .order_by("-created_at")
+            .all()
+        )
+    except Guild.DoesNotExist:
+        return "You dont have alliance"
 
     message = "Locations:\n"
     for hl in all_hidden_location:
