@@ -6,6 +6,7 @@ from django.contrib import admin
 # from chat_wars_database.app.guild_helper_bot.models import GuildMembers
 #
 #
+from chat_wars_database.app.guild_helper_bot.models import Alliance
 from chat_wars_database.app.guild_helper_bot.models import Guild
 from chat_wars_database.app.guild_helper_bot.models import InvitationLink
 from chat_wars_database.app.guild_helper_bot.models import Message
@@ -41,4 +42,9 @@ class UserGuildAdmin(admin.ModelAdmin):
 
 @admin.register(InvitationLink)
 class InvitationLinkAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Alliance)
+class AllianceAdmin(admin.ModelAdmin):
     pass

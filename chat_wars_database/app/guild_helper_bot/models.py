@@ -38,10 +38,19 @@ class UserDeposits(models.Model):
         return f"{self.telegram_user.name} - {self.item.name} - {self.total}"
 
 
+class Alliance(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    owner = models.ForeignKey("Guild", on_delete=models.CASCADE, related_name="alliance_guild_owner")
+
+    def __str__(self):
+        return self.name
+
+
 class Guild(models.Model):
     name = models.CharField(max_length=50, unique=True)
     captain = models.OneToOneField(TelegramUser, on_delete=models.CASCADE, unique=True)
     delete_command = models.CharField(null=True, blank=True, max_length=100)
+    alliance = models.ForeignKey(Alliance, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.name
