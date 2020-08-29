@@ -318,7 +318,7 @@ def command_locations(
 def _get_locations_and_build_message(telegram_user: TelegramUser) -> str:
     try:
         all_hidden_location = (
-            HiddenLocation.objects.filter(telegram_user__guild__alliance=telegram_user.guild)
+            HiddenLocation.objects.filter(telegram_user__guild__alliance=telegram_user.guild.alliance)
             .order_by("-created_at")
             .all()
         )
