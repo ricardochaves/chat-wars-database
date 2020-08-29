@@ -168,7 +168,7 @@ def report_commands(
 ):  # pylint: disable = unused-argument
 
     splited = update.message.text.split(" ")
-    user_guild = UserGuild.objects.filter(user=telegram_user)
+    user_guild = UserGuild.objects.filter(user=telegram_user).first()
     message = _execute_report(splited, user_guild.guild)
     context.bot.sendMessage(update.message.chat_id, message)
     return
@@ -202,7 +202,7 @@ def week_commands(
         context.bot.sendMessage(update.message.chat_id, "You need pass one item id: /week 13")
         return
 
-    user_guild = UserGuild.objects.filter(user=telegram_user)
+    user_guild = UserGuild.objects.filter(user=telegram_user).first()
     message = _execute_week_command(splitted, user_guild.guild)
     context.bot.sendMessage(update.message.chat_id, message)
 
