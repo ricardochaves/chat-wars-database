@@ -17,11 +17,13 @@ from chat_wars_database.app.guild_helper_bot.business.commands import telegram_c
 from chat_wars_database.app.guild_helper_bot.business.commands import telegram_command_update_guild_name
 from chat_wars_database.app.guild_helper_bot.business.commands import telegram_command_use_invited_id_link
 from chat_wars_database.app.guild_helper_bot.business.commands import telegram_command_use_leave_guild
-from chat_wars_database.app.guild_helper_bot.commands import deposit_event
+from chat_wars_database.app.guild_helper_bot.commands import command_headquarter
+from chat_wars_database.app.guild_helper_bot.commands import command_locations
 from chat_wars_database.app.guild_helper_bot.commands import help_command
 from chat_wars_database.app.guild_helper_bot.commands import report_commands
 from chat_wars_database.app.guild_helper_bot.commands import squad_command
 from chat_wars_database.app.guild_helper_bot.commands import start_command
+from chat_wars_database.app.guild_helper_bot.commands import text_event
 from chat_wars_database.app.guild_helper_bot.commands import week_commands
 from chat_wars_database.settings import TELEGRAM_GAME_BOT_TOKEN
 from chat_wars_database.settings import UNDER_MAINTENANCE
@@ -46,11 +48,13 @@ def add_handlers(dp):
     dp.add_handler(CommandHandler("create_invite_member_link", telegram_command_create_invite_member_link))
     dp.add_handler(CommandHandler("guild_info", telegram_command_guild_info))
     dp.add_handler(CommandHandler("alliance_info", telegram_command_alliance_info))
+    dp.add_handler(CommandHandler("locations", command_locations))
+    dp.add_handler(CommandHandler("headquarters", command_headquarter))
 
     dp.add_handler(RegexHandler("use_link_.*", telegram_command_use_invited_id_link))
     dp.add_handler(RegexHandler("leave_guild_\d*", telegram_command_use_leave_guild))
     # dp.add_handler(MessageHandler("⚜️Squad", squad_command))
-    dp.add_handler(MessageHandler(Filters.text, deposit_event))
+    dp.add_handler(MessageHandler(Filters.text, text_event))
 
 
 def main():

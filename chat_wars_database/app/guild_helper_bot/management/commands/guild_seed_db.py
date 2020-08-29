@@ -10,4 +10,4 @@ class Command(BaseCommand):
         t = TelegramUser.objects.create(name="ricardo", user_name="ricardo", telegram_id=123)
         g = Guild.objects.create(name="WAL", captain=t)
 
-        UserGuild.objects.create(user=t, guild=g)
+        UserGuild.objects.create(user=t, guild=g, role=UserGuild.ADMIN)

@@ -90,3 +90,38 @@ class UserGuild(models.Model):
             "user",
             "guild",
         )
+
+
+class HiddenMessage(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    chat_id = models.FloatField()
+    forward_date = models.DateTimeField()
+    telegram_user = models.ForeignKey(TelegramUser, on_delete=models.CASCADE)
+    message_text = models.TextField()
+    message_id = models.FloatField()
+
+    def __str__(self):
+        return f"{self.telegram_user.name} - {self.message_id}"
+
+
+class HiddenLocation(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    telegram_user = models.ForeignKey(TelegramUser, on_delete=models.CASCADE)
+    message = models.ForeignKey(HiddenMessage, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    lvl = models.IntegerField()
+    combination = models.CharField(max_length=20)
+
+    def __str__(self):
+        return self.name
+
+
+class HiddenHeadquarter(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    telegram_user = models.ForeignKey(TelegramUser, on_delete=models.CASCADE)
+    message = models.ForeignKey(HiddenMessage, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    combination = models.CharField(max_length=20)
+
+    def __str__(self):
+        return self.name

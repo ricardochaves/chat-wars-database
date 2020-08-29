@@ -6,6 +6,7 @@ from telegram import Update
 from telegram.ext import CallbackContext
 
 from chat_wars_database.app.guild_helper_bot.business.telegram_user import create_telegram_user_if_need
+from chat_wars_database.app.guild_helper_bot.models import UserGuild
 from chat_wars_database.app.helper import make_sure_connection_usable
 from chat_wars_database.settings import BOT_CLOSE_CONNECTIONS
 
@@ -28,6 +29,23 @@ def just_for_private_chat(func):
     def wrapped(update: Update, context: CallbackContext, *args, **kwargs):
 
         if update.effective_message.chat.type != "private":
+            return
+
+        result = func(update, context, *args, **kwargs)
+        return result
+
+    return wrapped
+
+
+def just_for_guild_admin(func):
+    @wraps(func)
+    def wrapped(update: Update, context: CallbackContext, *args, **kwargs):
+
+        telegram_user = create_telegram_user_if_need(
+            update.effective_user.id, update.effective_user.name, update.effective_user.username
+        )
+
+        if not UserGuild.objects.filter(user=telegram_user, role=UserGuild.ADMIN).exists():
             return
 
         result = func(update, context, *args, **kwargs)

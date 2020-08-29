@@ -3,6 +3,7 @@ import re
 from datetime import timedelta
 from typing import Dict
 from typing import List
+from typing import Optional
 from typing import Tuple
 
 from django.db import transaction
@@ -16,7 +17,12 @@ from chat_wars_database.app.business_core.models import Item
 from chat_wars_database.app.guild_helper_bot.business.guild import get_guild_from_user
 from chat_wars_database.app.guild_helper_bot.business.telegram_user import create_telegram_user_if_need
 from chat_wars_database.app.guild_helper_bot.decorators import inject_telegram_user
+from chat_wars_database.app.guild_helper_bot.decorators import just_for_guild_admin
+from chat_wars_database.app.guild_helper_bot.decorators import just_for_private_chat
 from chat_wars_database.app.guild_helper_bot.models import Guild
+from chat_wars_database.app.guild_helper_bot.models import HiddenHeadquarter
+from chat_wars_database.app.guild_helper_bot.models import HiddenLocation
+from chat_wars_database.app.guild_helper_bot.models import HiddenMessage
 from chat_wars_database.app.guild_helper_bot.models import Message
 from chat_wars_database.app.guild_helper_bot.models import TelegramUser
 from chat_wars_database.app.guild_helper_bot.models import UserDeposits
@@ -46,9 +52,11 @@ def help_command(update: Update, context: CallbackContext):  # pylint: disable =
     update.message.reply_text(message)
 
 
-def _get_name_and_qtd(message: str) -> Tuple[str, int]:
+def _get_name_and_qtd(message: str) -> Tuple[Optional[str], Optional[int]]:
     regex = "Deposited successfully: (.*) \((\d*)\)"
     m = re.search(regex, message)
+    if not m:
+        return None, None
     item_name = m.group(1)  # type: ignore
     item_qtd = int(m.group(2))  # type: ignore
 
@@ -68,24 +76,101 @@ def _execute_deposit(telegram_user_data: Dict, message_data: Dict) -> None:
         return
 
     item_name, item_qtd = _get_name_and_qtd(message_data["message_text"])
-    item = get_or_create_item(item_name)
 
-    with transaction.atomic():
-        message = Message.objects.create(**message_data)
+    if item_name and item_qtd:
 
-        user_deposits_data = {
-            "telegram_user": telegram_user,
-            "message": message,
-            "item": item,
-            "total": item_qtd,
-        }
+        item = get_or_create_item(item_name)
 
-        UserDeposits.objects.create(**user_deposits_data)
+        with transaction.atomic():
+            message = Message.objects.create(**message_data)
 
-    logger.info("Deposit successfully executed.")
+            user_deposits_data = {
+                "telegram_user": telegram_user,
+                "message": message,
+                "item": item,
+                "total": item_qtd,
+            }
+
+            UserDeposits.objects.create(**user_deposits_data)
+
+        logger.info("Deposit successfully executed.")
 
 
-def deposit_event(update: Update, context: CallbackContext):  # pylint: disable = unused-argument
+def _get_combination_from_hidden_location_or_headquarter(message: str) -> str:
+    regex = "combination: .*"
+    m = re.search(regex, message)
+    return m.group(0).replace("combination: ", "")  # type: ignore
+
+
+def _get_location_data_from_message(message: str) -> Optional[Dict]:
+    regex = "(You found hidden location )(.* )(lvl\.\d*)"
+    m = re.search(regex, message)
+    if not m:
+        return None
+
+    data = {
+        "name": m.group(2),
+        "lvl": int(m.group(3).replace("lvl.", "")),
+        "combination": _get_combination_from_hidden_location_or_headquarter(message),
+    }
+
+    return data
+
+
+def _get_headquarter_data_from_message(message: str) -> Optional[Dict]:
+    regex = "(You found hidden headquarter )(.*)"
+    m = re.search(regex, message)
+    if not m:
+        return None
+
+    data = {
+        "name": m.group(2),
+        "combination": _get_combination_from_hidden_location_or_headquarter(message),
+    }
+
+    return data
+
+
+def _execute_found_hidden_location_or_headquarter(telegram_user_data: Dict, message_data: Dict):
+    telegram_user, _ = TelegramUser.objects.get_or_create(
+        telegram_id=telegram_user_data["telegram_id"], defaults=telegram_user_data
+    )
+
+    message_data["telegram_user"] = telegram_user
+
+    if Message.objects.filter(forward_date=message_data["forward_date"], telegram_user=telegram_user).exists():
+        logger.info("The message seems repeated, I will ignore")
+        return
+
+    location_data = _get_location_data_from_message(message_data["message_text"])
+    if location_data:
+        with transaction.atomic():
+            message = HiddenMessage.objects.create(**message_data)
+            hidden_location_data = {
+                "telegram_user": telegram_user,
+                "message": message,
+                "name": location_data["name"],
+                "lvl": location_data["lvl"],
+                "combination": location_data["combination"],
+            }
+            HiddenLocation.objects.create(**hidden_location_data)
+        return
+
+    headquarter_data = _get_headquarter_data_from_message(message_data["message_text"])
+    if headquarter_data:
+        with transaction.atomic():
+            message = HiddenMessage.objects.create(**message_data)
+            hidden_headquarter_data = {
+                "telegram_user": telegram_user,
+                "message": message,
+                "name": headquarter_data["name"],
+                "combination": headquarter_data["combination"],
+            }
+            HiddenHeadquarter.objects.create(**hidden_headquarter_data)
+        return
+
+
+def text_event(update: Update, context: CallbackContext):  # pylint: disable = unused-argument
     if not update.message.forward_from:
         logging.info("Message is not forwarded")
         return
@@ -108,6 +193,7 @@ def deposit_event(update: Update, context: CallbackContext):  # pylint: disable 
     }
 
     _execute_deposit(telegram_user_data, message_data)
+    _execute_found_hidden_location_or_headquarter(telegram_user_data, message_data)
 
 
 def _build_item_list(deposits, message) -> str:
@@ -216,6 +302,52 @@ def start_command(update: Update, context: CallbackContext):  # pylint: disable 
 
     create_telegram_user_if_need(update.effective_user.id, update.effective_user.name, update.effective_user.username)
     help_command(update, context)
+
+
+@just_for_private_chat
+@just_for_guild_admin
+@inject_telegram_user
+def command_locations(
+    update: Update, context: CallbackContext, telegram_user: TelegramUser
+):  # pylint: disable = unused-argument
+
+    message = _get_locations_and_build_message
+    update.message.reply_html(message)
+
+
+def _get_locations_and_build_message(telegram_user: TelegramUser) -> str:
+    all_hidden_location = (
+        HiddenLocation.objects.filter(telegram_user__guild=telegram_user.guild).order_by("-created_at").all()
+    )
+
+    message = "Locations:\n"
+    for hl in all_hidden_location:
+        message += f"{hl.name} lvl {hl.lvl} - {hl.combination}\n"
+
+    return message
+
+
+@just_for_private_chat
+@just_for_guild_admin
+@inject_telegram_user
+def command_headquarter(
+    update: Update, context: CallbackContext, telegram_user: TelegramUser
+):  # pylint: disable = unused-argument
+
+    message = _get_headquarter_and_build_message
+    update.message.reply_html(message)
+
+
+def _get_headquarter_and_build_message(telegram_user: TelegramUser) -> str:
+    all_hidden_headquarter = (
+        HiddenHeadquarter.objects.filter(telegram_user__guild=telegram_user.guild).order_by("-created_at").all()
+    )
+
+    message = "Headquarters:\n"
+    for hh in all_hidden_headquarter:
+        message += f"{hh.name} - {hh.combination}\n"
+
+    return message
 
 
 def squad_command(update: Update, context: CallbackContext):  # pylint: disable = unused-argument
