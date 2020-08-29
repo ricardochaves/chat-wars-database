@@ -171,3 +171,24 @@ headquarter_1 - Xk3jr
         message = _get_headquarter_and_build_message(self.telegram_user_captain)
 
         self.assertEqual(message, expected_message)
+
+    def test_should_return_you_dont_have_alliance(self):
+        fake_user = TelegramUser.objects.create(name="ZPT_XPTO", user_name="asd", telegram_id=456)
+        HiddenHeadquarter.objects.create(
+            telegram_user=self.telegram_user_captain,
+            message=self.hidden_message,
+            name="headquarter_1",
+            combination="Xk3jr",
+        )
+        HiddenHeadquarter.objects.create(
+            telegram_user=self.telegram_user_captain,
+            message=self.hidden_message,
+            name="headquarter_2",
+            combination="K3kDr",
+        )
+
+        expected_message = "You dont have alliance"
+
+        message = _get_headquarter_and_build_message(fake_user)
+
+        self.assertEqual(message, expected_message)

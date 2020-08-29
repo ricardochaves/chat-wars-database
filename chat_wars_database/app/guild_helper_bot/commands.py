@@ -311,7 +311,7 @@ def command_locations(
     update: Update, context: CallbackContext, telegram_user: TelegramUser
 ):  # pylint: disable = unused-argument
 
-    message = _get_locations_and_build_message
+    message = _get_locations_and_build_message(telegram_user)
     update.message.reply_html(message)
 
 
@@ -334,14 +334,20 @@ def command_headquarter(
     update: Update, context: CallbackContext, telegram_user: TelegramUser
 ):  # pylint: disable = unused-argument
 
-    message = _get_headquarter_and_build_message
+    message = _get_headquarter_and_build_message(telegram_user)
     update.message.reply_html(message)
 
 
 def _get_headquarter_and_build_message(telegram_user: TelegramUser) -> str:
-    all_hidden_headquarter = (
-        HiddenHeadquarter.objects.filter(telegram_user__guild=telegram_user.guild).order_by("-created_at").all()
-    )
+
+    try:
+        all_hidden_headquarter = (
+            HiddenHeadquarter.objects.filter(telegram_user__guild__alliance=telegram_user.guild.alliance)
+            .order_by("-created_at")
+            .all()
+        )
+    except Guild.DoesNotExist:
+        return "You dont have alliance"
 
     message = "Headquarters:\n"
     for hh in all_hidden_headquarter:
