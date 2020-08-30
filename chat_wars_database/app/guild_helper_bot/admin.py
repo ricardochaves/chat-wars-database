@@ -8,6 +8,9 @@ from django.contrib import admin
 #
 from chat_wars_database.app.guild_helper_bot.models import Alliance
 from chat_wars_database.app.guild_helper_bot.models import Guild
+from chat_wars_database.app.guild_helper_bot.models import HiddenHeadquarter
+from chat_wars_database.app.guild_helper_bot.models import HiddenLocation
+from chat_wars_database.app.guild_helper_bot.models import HiddenMessage
 from chat_wars_database.app.guild_helper_bot.models import InvitationLink
 from chat_wars_database.app.guild_helper_bot.models import Message
 from chat_wars_database.app.guild_helper_bot.models import TelegramUser
@@ -47,4 +50,19 @@ class InvitationLinkAdmin(admin.ModelAdmin):
 
 @admin.register(Alliance)
 class AllianceAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(HiddenMessage)
+class HiddenMessageAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(HiddenLocation)
+class HiddenLocationAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(HiddenHeadquarter)
+class HiddenHeadquarterAdmin(admin.ModelAdmin):
     pass

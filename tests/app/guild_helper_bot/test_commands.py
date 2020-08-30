@@ -14,16 +14,20 @@ from chat_wars_database.app.guild_helper_bot.models import HiddenMessage
 from chat_wars_database.app.guild_helper_bot.models import TelegramUser
 from chat_wars_database.app.guild_helper_bot.models import UserDeposits
 from chat_wars_database.app.guild_helper_bot.models import UserGuild
+from tests.app.helper import create_alliance
+from tests.app.helper import create_guild
+from tests.app.helper import create_telegram_user
+from tests.app.helper import create_user_guild
 
 
 class TestGuild(TestCase):
     def setUp(self) -> None:
-        self.telegram_user_captain = TelegramUser.objects.create(name="Ricardo", user_name="ricardo", telegram_id=123)
-        self.guild = Guild.objects.create(name="guild_name_test", captain=self.telegram_user_captain)
-        self.alliance = Alliance.objects.create(name="alliance_name_test", owner=self.guild)
+        self.telegram_user_captain = create_telegram_user("Ricardo", "ricardo", 123)
+        self.guild = create_guild("guild_name_test", self.telegram_user_captain)
+        self.alliance = create_alliance("alliance_name_test", self.guild)
         self.guild.alliance = self.alliance
         self.guild.save()
-        self.user_guild = UserGuild.objects.create(user=self.telegram_user_captain, guild=self.guild)
+        self.user_guild = create_user_guild(self.telegram_user_captain, self.guild, UserGuild.ADMIN)
 
         self.hidden_message = HiddenMessage.objects.create(
             chat_id=123,
@@ -116,7 +120,7 @@ You noticed that objective is captured by alliance.
         hidden_headquarter = HiddenHeadquarter.objects.first()
         self.assertEqual(hidden_headquarter.combination, "d5shvW")
 
-    def test_should_return_locations_message(self):
+    def test_should_return_locations_message_for_captain(self):
         fake_user = TelegramUser.objects.create(name="ZPT_XPTO", user_name="asd", telegram_id=456)
         HiddenLocation.objects.create(
             telegram_user=self.telegram_user_captain,
@@ -145,7 +149,7 @@ location_1 lvl 50 - Xk3jr
 
         self.assertEqual(message, expected_message)
 
-    def test_should_return_headquarter_message(self):
+    def test_should_return_headquarter_message_for_captain(self):
         fake_user = TelegramUser.objects.create(name="ZPT_XPTO", user_name="asd", telegram_id=456)
         HiddenHeadquarter.objects.create(
             telegram_user=self.telegram_user_captain,
@@ -190,5 +194,65 @@ headquarter_1 - Xk3jr
         expected_message = "You dont have alliance"
 
         message = _get_headquarter_and_build_message(fake_user)
+
+        self.assertEqual(message, expected_message)
+
+    def test_should_return_locations_message_for_admin(self):
+        fake_user = create_telegram_user("ZPT_XPTO", "asd", 456)
+        create_user_guild(fake_user, self.guild, UserGuild.ADMIN)
+
+        HiddenLocation.objects.create(
+            telegram_user=self.telegram_user_captain,
+            message=self.hidden_message,
+            name="location_1",
+            lvl=50,
+            combination="Xk3jr",
+        )
+        HiddenLocation.objects.create(
+            telegram_user=self.telegram_user_captain,
+            message=self.hidden_message,
+            name="location_2",
+            lvl=55,
+            combination="K3kDr",
+        )
+        HiddenLocation.objects.create(
+            telegram_user=fake_user, message=self.hidden_message, name="location_2", lvl=10, combination="KRU8OL"
+        )
+
+        expected_message = """Locations:
+location_2 lvl 55 - K3kDr
+location_1 lvl 50 - Xk3jr
+"""
+
+        message = _get_locations_and_build_message(self.telegram_user_captain)
+
+        self.assertEqual(message, expected_message)
+
+    def test_should_return_headquarter_message_for_admin(self):
+        fake_user = create_telegram_user("ZPT_XPTO", "asd", 456)
+        create_user_guild(fake_user, self.guild, UserGuild.ADMIN)
+
+        HiddenHeadquarter.objects.create(
+            telegram_user=self.telegram_user_captain,
+            message=self.hidden_message,
+            name="headquarter_1",
+            combination="Xk3jr",
+        )
+        HiddenHeadquarter.objects.create(
+            telegram_user=self.telegram_user_captain,
+            message=self.hidden_message,
+            name="headquarter_2",
+            combination="K3kDr",
+        )
+        HiddenHeadquarter.objects.create(
+            telegram_user=fake_user, message=self.hidden_message, name="headquarter_3", combination="KRU8OL"
+        )
+
+        expected_message = """Headquarters:
+headquarter_2 - K3kDr
+headquarter_1 - Xk3jr
+"""
+
+        message = _get_headquarter_and_build_message(self.telegram_user_captain)
 
         self.assertEqual(message, expected_message)
