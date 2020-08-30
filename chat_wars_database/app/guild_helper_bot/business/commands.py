@@ -90,14 +90,20 @@ def telegram_command_guild_info(update: Update, context: CallbackContext, telegr
 
 
 def command_guild_info(telegram_user: TelegramUser) -> str:
+    def _get_role_str(user_guild: UserGuild) -> str:
+        if user_guild.role == UserGuild.ADMIN:
+            return "Admin"
+        return "Member"
+
     try:
         guild = guild_info(telegram_user)
         users = guild.userguild_set.all()
         user_list = ""
         for u in users:
-            user_list += f"{u.user.name}\n"
+            user_list += f"{u.user.name} - {_get_role_str(u)}\n"
 
         return f"""Guild: {guild.name}
+👑 - {guild.captain.name}
 
 {user_list}
 
