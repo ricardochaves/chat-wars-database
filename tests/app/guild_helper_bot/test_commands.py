@@ -220,16 +220,18 @@ headquarter_1 - Xk3jr
         )
 
         expected_message = """Locations:
+location_2 lvl 10 - KRU8OL
 location_2 lvl 55 - K3kDr
 location_1 lvl 50 - Xk3jr
 """
 
-        message = _get_locations_and_build_message(self.telegram_user_captain)
+        message = _get_locations_and_build_message(fake_user)
 
         self.assertEqual(message, expected_message)
 
     def test_should_return_headquarter_message_for_admin(self):
         fake_user = create_telegram_user("ZPT_XPTO", "asd", 456)
+        fake_user_2 = create_telegram_user("asdf", "asd", 765)
         create_user_guild(fake_user, self.guild, UserGuild.ADMIN)
 
         HiddenHeadquarter.objects.create(
@@ -249,10 +251,11 @@ location_1 lvl 50 - Xk3jr
         )
 
         expected_message = """Headquarters:
+headquarter_3 - KRU8OL
 headquarter_2 - K3kDr
 headquarter_1 - Xk3jr
 """
 
-        message = _get_headquarter_and_build_message(self.telegram_user_captain)
+        message = _get_headquarter_and_build_message(fake_user)
 
         self.assertEqual(message, expected_message)

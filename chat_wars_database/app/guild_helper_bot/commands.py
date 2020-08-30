@@ -317,12 +317,19 @@ def command_locations(
 
 def _get_locations_and_build_message(telegram_user: TelegramUser) -> str:
     try:
-        all_hidden_location = (
-            HiddenLocation.objects.filter(telegram_user__guild__alliance=telegram_user.guild.alliance)
-            .order_by("-created_at")
-            .all()
-        )
+
+        guild_user = UserGuild.objects.get(user=telegram_user)
+        guilds = Guild.objects.filter(alliance=guild_user.guild.alliance).all()
+        users: List[TelegramUser] = []
+        for g in guilds:
+            guild_users = UserGuild.objects.filter(guild=g).all()
+            for gu in guild_users:
+                users.append(gu.user)
+
+        all_hidden_location = HiddenLocation.objects.filter(telegram_user__in=users).order_by("-created_at").all()
     except Guild.DoesNotExist:
+        return "You dont have alliance"
+    except UserGuild.DoesNotExist:
         return "You dont have alliance"
 
     message = "Locations:\n"
@@ -346,12 +353,18 @@ def command_headquarter(
 def _get_headquarter_and_build_message(telegram_user: TelegramUser) -> str:
 
     try:
-        all_hidden_headquarter = (
-            HiddenHeadquarter.objects.filter(telegram_user__guild__alliance=telegram_user.guild.alliance)
-            .order_by("-created_at")
-            .all()
-        )
+        guild_user = UserGuild.objects.get(user=telegram_user)
+        guilds = Guild.objects.filter(alliance=guild_user.guild.alliance).all()
+        users: List[TelegramUser] = []
+        for g in guilds:
+            guild_users = UserGuild.objects.filter(guild=g).all()
+            for gu in guild_users:
+                users.append(gu.user)
+
+        all_hidden_headquarter = HiddenHeadquarter.objects.filter(telegram_user__in=users).order_by("-created_at").all()
     except Guild.DoesNotExist:
+        return "You dont have alliance"
+    except UserGuild.DoesNotExist:
         return "You dont have alliance"
 
     message = "Headquarters:\n"
