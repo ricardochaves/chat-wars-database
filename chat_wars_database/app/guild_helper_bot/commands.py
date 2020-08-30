@@ -144,6 +144,11 @@ def _execute_found_hidden_location_or_headquarter(telegram_user_data: Dict, mess
 
     location_data = _get_location_data_from_message(message_data["message_text"])
     if location_data:
+
+        if HiddenLocation.objects.filter(combination=location_data["combination"]).exists():
+            logger.info("The location already exists, I will ignore")
+            return
+
         with transaction.atomic():
             message = HiddenMessage.objects.create(**message_data)
             hidden_location_data = {
@@ -158,6 +163,11 @@ def _execute_found_hidden_location_or_headquarter(telegram_user_data: Dict, mess
 
     headquarter_data = _get_headquarter_data_from_message(message_data["message_text"])
     if headquarter_data:
+
+        if HiddenHeadquarter.objects.filter(combination=headquarter_data["combination"]).exists():
+            logger.info("The headquarter already exists, I will ignore")
+            return
+
         with transaction.atomic():
             message = HiddenMessage.objects.create(**message_data)
             hidden_headquarter_data = {

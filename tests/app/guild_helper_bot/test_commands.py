@@ -36,6 +36,11 @@ class TestGuild(TestCase):
             message_text="234",
             message_id=234,
         )
+        self.telegram_user_data = {
+            "user_name": "@ricardo",
+            "name": "ricardo",
+            "telegram_id": 123,
+        }
 
     def test_should_return_alliance_info(self):
         expected_message = f"""alliance_name_test
@@ -69,11 +74,6 @@ Owner: guild_name_test"""
         message_text = """You found hidden location Ancient Ruins lvl.60
 You noticed that objective is captured by alliance.
 То remember the route you associated it with simple combination: DmVnRJ"""
-        telegram_user_data = {
-            "user_name": "@ricardo",
-            "name": "ricardo",
-            "telegram_id": 123,
-        }
 
         message_data = {
             "chat_id": 456,
@@ -83,7 +83,7 @@ You noticed that objective is captured by alliance.
         }
         HiddenMessage.objects.all().delete()
 
-        _execute_found_hidden_location_or_headquarter(telegram_user_data, message_data)
+        _execute_found_hidden_location_or_headquarter(self.telegram_user_data, message_data)
 
         self.assertEqual(HiddenMessage.objects.count(), 1)
         self.assertEqual(HiddenLocation.objects.count(), 1)
@@ -97,12 +97,6 @@ You noticed that objective is captured by alliance.
         message_text = """You found hidden headquarter Heavy Star
 То remember the route you associated it with simple combination: d5shvW"""
 
-        telegram_user_data = {
-            "user_name": "@ricardo",
-            "name": "ricardo",
-            "telegram_id": 123,
-        }
-
         message_data = {
             "chat_id": 456,
             "forward_date": datetime.now(),
@@ -111,7 +105,7 @@ You noticed that objective is captured by alliance.
         }
         HiddenMessage.objects.all().delete()
 
-        _execute_found_hidden_location_or_headquarter(telegram_user_data, message_data)
+        _execute_found_hidden_location_or_headquarter(self.telegram_user_data, message_data)
 
         self.assertEqual(HiddenMessage.objects.count(), 1)
         self.assertEqual(HiddenHeadquarter.objects.count(), 1)
@@ -259,3 +253,33 @@ headquarter_1 - Xk3jr
         message = _get_headquarter_and_build_message(fake_user)
 
         self.assertEqual(message, expected_message)
+
+    def test_execute_found_hidden_location_or_headquarter_should_ignore_duplicate_combination(self):
+        message_text = """You found hidden location Ancient Ruins lvl.60
+You noticed that objective is captured by alliance.
+То remember the route you associated it with simple combination: DmVnRJ"""
+
+        message_data_1 = {
+            "chat_id": 456,
+            "forward_date": datetime.now(),
+            "message_text": message_text,
+            "message_id": 987,
+        }
+        message_data_2 = {
+            "chat_id": 456,
+            "forward_date": datetime.now(),
+            "message_text": message_text,
+            "message_id": 876543,
+        }
+        HiddenMessage.objects.all().delete()
+
+        _execute_found_hidden_location_or_headquarter(self.telegram_user_data, message_data_1)
+        _execute_found_hidden_location_or_headquarter(self.telegram_user_data, message_data_2)
+
+        self.assertEqual(HiddenMessage.objects.count(), 1)
+        self.assertEqual(HiddenLocation.objects.count(), 1)
+        self.assertEqual(UserDeposits.objects.count(), 0)
+
+        hidden_location = HiddenLocation.objects.first()
+        self.assertEqual(hidden_location.combination, "DmVnRJ")
+        self.assertEqual(hidden_location.lvl, 60)

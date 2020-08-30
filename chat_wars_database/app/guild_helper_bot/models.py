@@ -125,3 +125,9 @@ class HiddenHeadquarter(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class GuildChannel(models.Model):
+    chat_id = models.FloatField()
+    name = models.CharField(max_length=100)
+    alliance_ataque_orders = models.BooleanField(default=False)
