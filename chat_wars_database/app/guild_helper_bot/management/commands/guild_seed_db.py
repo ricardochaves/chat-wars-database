@@ -1,6 +1,7 @@
 from django.core.management import BaseCommand
 
 from chat_wars_database.app.guild_helper_bot.models import Guild
+from chat_wars_database.app.guild_helper_bot.models import GuildChannel
 from chat_wars_database.app.guild_helper_bot.models import TelegramUser
 from chat_wars_database.app.guild_helper_bot.models import UserGuild
 
@@ -11,3 +12,4 @@ class Command(BaseCommand):
         g = Guild.objects.create(name="WAL", captain=t)
 
         UserGuild.objects.create(user=t, guild=g, role=UserGuild.ADMIN)
+        GuildChannel.objects.create(chat_id=-331100209, name="Test group", alliance_atack_orders=True, guild=g)

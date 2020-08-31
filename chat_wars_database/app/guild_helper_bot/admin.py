@@ -8,6 +8,7 @@ from django.contrib import admin
 #
 from chat_wars_database.app.guild_helper_bot.models import Alliance
 from chat_wars_database.app.guild_helper_bot.models import Guild
+from chat_wars_database.app.guild_helper_bot.models import GuildChannel
 from chat_wars_database.app.guild_helper_bot.models import HiddenHeadquarter
 from chat_wars_database.app.guild_helper_bot.models import HiddenLocation
 from chat_wars_database.app.guild_helper_bot.models import HiddenMessage
@@ -65,4 +66,9 @@ class HiddenLocationAdmin(admin.ModelAdmin):
 
 @admin.register(HiddenHeadquarter)
 class HiddenHeadquarterAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(GuildChannel)
+class GuildChannelAdmin(admin.ModelAdmin):
     pass

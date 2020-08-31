@@ -4,7 +4,6 @@ from django.core.management import BaseCommand
 from telegram.ext import CommandHandler
 from telegram.ext import Filters
 from telegram.ext import MessageHandler
-from telegram.ext import RegexHandler
 from telegram.ext import Updater
 
 from chat_wars_database.app.game_bot.bot_handlers import error
@@ -14,6 +13,7 @@ from chat_wars_database.app.guild_helper_bot.business.commands import telegram_c
 from chat_wars_database.app.guild_helper_bot.business.commands import telegram_command_create_invite_member_link
 from chat_wars_database.app.guild_helper_bot.business.commands import telegram_command_guild_info
 from chat_wars_database.app.guild_helper_bot.business.commands import telegram_command_leave_guild
+from chat_wars_database.app.guild_helper_bot.business.commands import telegram_command_send_alliance_atack_order
 from chat_wars_database.app.guild_helper_bot.business.commands import telegram_command_update_guild_name
 from chat_wars_database.app.guild_helper_bot.business.commands import telegram_command_use_invited_id_link
 from chat_wars_database.app.guild_helper_bot.business.commands import telegram_command_use_leave_guild
@@ -25,6 +25,7 @@ from chat_wars_database.app.guild_helper_bot.commands import squad_command
 from chat_wars_database.app.guild_helper_bot.commands import start_command
 from chat_wars_database.app.guild_helper_bot.commands import text_event
 from chat_wars_database.app.guild_helper_bot.commands import week_commands
+from chat_wars_database.app.guild_helper_bot.handlers import create_new_message_conversation
 from chat_wars_database.settings import TELEGRAM_GAME_BOT_TOKEN
 from chat_wars_database.settings import UNDER_MAINTENANCE
 
@@ -51,8 +52,12 @@ def add_handlers(dp):
     dp.add_handler(CommandHandler("locations", command_locations))
     dp.add_handler(CommandHandler("headquarters", command_headquarter))
 
-    dp.add_handler(RegexHandler("use_link_.*", telegram_command_use_invited_id_link))
-    dp.add_handler(RegexHandler("leave_guild_\d*", telegram_command_use_leave_guild))
+    dp.add_handler(MessageHandler(Filters.regex("use_link_.*"), telegram_command_use_invited_id_link))
+    dp.add_handler(MessageHandler(Filters.regex("leave_guild_\d*"), telegram_command_use_leave_guild))
+    dp.add_handler(MessageHandler(Filters.regex("atack_.*"), telegram_command_send_alliance_atack_order))
+
+    create_new_message_conversation(dp)
+
     # dp.add_handler(MessageHandler("⚜️Squad", squad_command))
     dp.add_handler(MessageHandler(Filters.text, text_event))
 

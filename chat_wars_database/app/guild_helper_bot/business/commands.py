@@ -1,8 +1,16 @@
+from typing import List
+from typing import Tuple
+
 from django.db import IntegrityError
+from telegram import InlineKeyboardButton
+from telegram import InlineKeyboardMarkup
+from telegram import KeyboardButton
 from telegram import Update
 from telegram.ext import CallbackContext
 
 from chat_wars_database.app.guild_helper_bot.business.alliance import alliance_info
+from chat_wars_database.app.guild_helper_bot.business.alliance import get_all_chats_for_alliance_atack_orders
+from chat_wars_database.app.guild_helper_bot.business.alliance import get_target_infos
 from chat_wars_database.app.guild_helper_bot.business.guild import create_guild
 from chat_wars_database.app.guild_helper_bot.business.guild import create_invite_member_link
 from chat_wars_database.app.guild_helper_bot.business.guild import guild_info
@@ -188,3 +196,44 @@ Owner: {alliance.owner}"""
 
     except UserGuild.DoesNotExist:
         return f"You don't have any guild. Use /create_guild <name>"
+
+
+@just_for_private_chat
+@inject_telegram_user
+def telegram_command_send_alliance_atack_order(update: Update, context: CallbackContext, telegram_user: TelegramUser):
+    split = update.effective_message.text.split("_")
+    if len(split) < 2:
+        return
+    target = split[1]
+
+    message, link = command_send_alliance_atack_order(telegram_user, target)
+
+    keyboard = [[InlineKeyboardButton("TODOS", url=link)]]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
+    chats = get_all_chats_for_alliance_atack_orders(telegram_user)
+    for c in chats:
+        context.bot.send_message(c, message, reply_markup=reply_markup)
+
+    update.message.reply_html(message, reply_markup=reply_markup)
+
+
+def command_send_alliance_atack_order(telegram_user: TelegramUser, target: str) -> Tuple[str, str]:
+
+    target_info = get_target_infos(target)
+
+    message = f"""🏆🏆🏆🏆
+    
+    All members of the alliance, raise their weapons and prepare for our hour!
+    
+    Let's record our name in the history of this world! We will be the legend!
+    
+    Pray to the Gods, make your offerings!! 🔱🔱🔱
+    
+    We will for {target_info}
+
+    😡⚔️USE RAGE⚔️😡"""
+
+    link = f"https://t.me/share/url?url=/ga_atk_{target}"
+
+    return message, link

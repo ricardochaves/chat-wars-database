@@ -130,4 +130,5 @@ class HiddenHeadquarter(models.Model):
 class GuildChannel(models.Model):
     chat_id = models.FloatField()
     name = models.CharField(max_length=100)
-    alliance_ataque_orders = models.BooleanField(default=False)
+    alliance_atack_orders = models.BooleanField(default=False)
+    guild = models.ForeignKey(Guild, on_delete=models.CASCADE)
