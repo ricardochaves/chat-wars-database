@@ -135,8 +135,8 @@ You noticed that objective is captured by alliance.
         )
 
         expected_message = """Locations:
-location_2 lvl 55 - K3kDr
-location_1 lvl 50 - Xk3jr
+location_2 lvl 55 - K3kDr - /ga_atk_K3kDr
+location_1 lvl 50 - Xk3jr - /ga_atk_Xk3jr
 """
 
         message = _get_locations_and_build_message(self.telegram_user_captain)
@@ -162,8 +162,8 @@ location_1 lvl 50 - Xk3jr
         )
 
         expected_message = """Headquarters:
-headquarter_2 - K3kDr
-headquarter_1 - Xk3jr
+headquarter_2 - K3kDr - /ga_atk_K3kDr
+headquarter_1 - Xk3jr - /ga_atk_Xk3jr
 """
 
         message = _get_headquarter_and_build_message(self.telegram_user_captain)
@@ -214,9 +214,9 @@ headquarter_1 - Xk3jr
         )
 
         expected_message = """Locations:
-location_2 lvl 10 - KRU8OL
-location_2 lvl 55 - K3kDr
-location_1 lvl 50 - Xk3jr
+location_2 lvl 10 - KRU8OL - /ga_atk_KRU8OL
+location_2 lvl 55 - K3kDr - /ga_atk_K3kDr
+location_1 lvl 50 - Xk3jr - /ga_atk_Xk3jr
 """
 
         message = _get_locations_and_build_message(fake_user)
@@ -245,9 +245,9 @@ location_1 lvl 50 - Xk3jr
         )
 
         expected_message = """Headquarters:
-headquarter_3 - KRU8OL
-headquarter_2 - K3kDr
-headquarter_1 - Xk3jr
+headquarter_3 - KRU8OL - /ga_atk_KRU8OL
+headquarter_2 - K3kDr - /ga_atk_K3kDr
+headquarter_1 - Xk3jr - /ga_atk_Xk3jr
 """
 
         message = _get_headquarter_and_build_message(fake_user)
