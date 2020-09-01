@@ -110,7 +110,7 @@ class HiddenLocation(models.Model):
     message = models.ForeignKey(HiddenMessage, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     lvl = models.IntegerField()
-    combination = models.CharField(max_length=20)
+    combination = models.CharField(max_length=20, unique=True)
 
     def __str__(self):
         return self.name
@@ -121,7 +121,7 @@ class HiddenHeadquarter(models.Model):
     telegram_user = models.ForeignKey(TelegramUser, on_delete=models.CASCADE)
     message = models.ForeignKey(HiddenMessage, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
-    combination = models.CharField(max_length=20)
+    combination = models.CharField(max_length=20, unique=True)
 
     def __str__(self):
         return self.name

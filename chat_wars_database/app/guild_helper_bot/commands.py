@@ -1,5 +1,6 @@
 import logging
 import re
+from datetime import datetime
 from datetime import timedelta
 from typing import Dict
 from typing import List
@@ -335,7 +336,10 @@ def get_all_hidden_locations(telegram_user: TelegramUser) -> List[HiddenLocation
         for gu in guild_users:
             users.append(gu.user)
 
-    all_hidden_location = HiddenLocation.objects.filter(telegram_user__in=users).order_by("-created_at").all()
+    limit_date = datetime.now() - timedelta(days=7)
+    all_hidden_location = (
+        HiddenLocation.objects.filter(telegram_user__in=users, created_at__gte=limit_date).order_by("-created_at").all()
+    )
     return all_hidden_location
 
 
