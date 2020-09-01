@@ -56,17 +56,29 @@ class AllianceAdmin(admin.ModelAdmin):
 
 @admin.register(HiddenMessage)
 class HiddenMessageAdmin(admin.ModelAdmin):
-    pass
+    list_display = ("created_at", "telegram_user", "_hidden_location", "_hidden_headquarter")
+
+    @staticmethod
+    def _hidden_location(obj):
+        location = obj.hiddenlocation_set.first()
+        if location:
+            return f"{location.name} - {location.lvl} - {location.combination}"
+
+    @staticmethod
+    def _hidden_headquarter(obj):
+        headquarter = obj.hiddenheadquarter_set.first()
+        if headquarter:
+            return f"{headquarter.name} - {headquarter.combination}"
 
 
 @admin.register(HiddenLocation)
 class HiddenLocationAdmin(admin.ModelAdmin):
-    pass
+    list_display = ("created_at", "telegram_user", "name", "lvl", "combination")
 
 
 @admin.register(HiddenHeadquarter)
 class HiddenHeadquarterAdmin(admin.ModelAdmin):
-    pass
+    list_display = ("created_at", "telegram_user", "name", "combination")
 
 
 @admin.register(GuildChannel)
