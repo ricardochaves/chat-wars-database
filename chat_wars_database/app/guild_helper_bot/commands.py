@@ -146,10 +146,6 @@ def _execute_found_hidden_location_or_headquarter(telegram_user_data: Dict, mess
     location_data = _get_location_data_from_message(message_data["message_text"])
     if location_data:
 
-        if HiddenLocation.objects.filter(combination=location_data["combination"]).exists():
-            logger.info("The location already exists, I will ignore")
-            return
-
         with transaction.atomic():
             message = HiddenMessage.objects.create(**message_data)
             hidden_location_data = {
@@ -338,7 +334,10 @@ def get_all_hidden_locations(telegram_user: TelegramUser) -> List[HiddenLocation
 
     limit_date = datetime.now() - timedelta(days=7)
     all_hidden_location = (
-        HiddenLocation.objects.filter(telegram_user__in=users, created_at__gte=limit_date).order_by("-created_at").all()
+        HiddenLocation.objects.filter(telegram_user__in=users, created_at__gte=limit_date)
+        .distinct("combination")
+        .order_by("combination", "-created_at")
+        .all()
     )
     return all_hidden_location
 
@@ -377,7 +376,12 @@ def get_all_hidden_headquarters(telegram_user: TelegramUser) -> List[HiddenHeadq
         for gu in guild_users:
             users.append(gu.user)
 
-    all_hidden_headquarter = HiddenHeadquarter.objects.filter(telegram_user__in=users).order_by("-created_at").all()
+    all_hidden_headquarter = (
+        HiddenHeadquarter.objects.filter(telegram_user__in=users)
+        .distinct("combination")
+        .order_by("combination", "-created_at")
+        .all()
+    )
     return all_hidden_headquarter
 
 

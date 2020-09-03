@@ -210,18 +210,23 @@ headquarter_1 - Xk3jr - /ga_atk_Xk3jr
             combination="K3kDr",
         )
         HiddenLocation.objects.create(
-            telegram_user=fake_user, message=self.hidden_message, name="location_2", lvl=10, combination="KRU8OL"
+            telegram_user=fake_user, message=self.hidden_message, name="location_3", lvl=10, combination="KRU8OL"
+        )
+
+        HiddenLocation.objects.create(
+            telegram_user=fake_user, message=self.hidden_message, name="location_1", lvl=50, combination="Xk3jr"
         )
 
         expected_message = """Locations:
-location_2 lvl 10 - KRU8OL - /ga_atk_KRU8OL
 location_2 lvl 55 - K3kDr - /ga_atk_K3kDr
+location_3 lvl 10 - KRU8OL - /ga_atk_KRU8OL
 location_1 lvl 50 - Xk3jr - /ga_atk_Xk3jr
 """
 
         message = _get_locations_and_build_message(fake_user)
 
         self.assertEqual(message, expected_message)
+        self.assertEqual(HiddenLocation.objects.count(), 4)
 
     def test_should_return_headquarter_message_for_admin(self):
         fake_user = create_telegram_user("ZPT_XPTO", "asd", 456)
@@ -243,43 +248,48 @@ location_1 lvl 50 - Xk3jr - /ga_atk_Xk3jr
         HiddenHeadquarter.objects.create(
             telegram_user=fake_user, message=self.hidden_message, name="headquarter_3", combination="KRU8OL"
         )
+        HiddenHeadquarter.objects.create(
+            telegram_user=fake_user, message=self.hidden_message, name="headquarter_2", combination="K3kDr"
+        )
 
         expected_message = """Headquarters:
-headquarter_3 - KRU8OL - /ga_atk_KRU8OL
 headquarter_2 - K3kDr - /ga_atk_K3kDr
+headquarter_3 - KRU8OL - /ga_atk_KRU8OL
 headquarter_1 - Xk3jr - /ga_atk_Xk3jr
 """
 
         message = _get_headquarter_and_build_message(fake_user)
 
         self.assertEqual(message, expected_message)
+        self.assertEqual(HiddenHeadquarter.objects.count(), 4)
 
-    def test_execute_found_hidden_location_or_headquarter_should_ignore_duplicate_combination(self):
-        message_text = """You found hidden location Ancient Ruins lvl.60
-You noticed that objective is captured by alliance.
-То remember the route you associated it with simple combination: DmVnRJ"""
 
-        message_data_1 = {
-            "chat_id": 456,
-            "forward_date": datetime.now(),
-            "message_text": message_text,
-            "message_id": 987,
-        }
-        message_data_2 = {
-            "chat_id": 456,
-            "forward_date": datetime.now(),
-            "message_text": message_text,
-            "message_id": 876543,
-        }
-        HiddenMessage.objects.all().delete()
-
-        _execute_found_hidden_location_or_headquarter(self.telegram_user_data, message_data_1)
-        _execute_found_hidden_location_or_headquarter(self.telegram_user_data, message_data_2)
-
-        self.assertEqual(HiddenMessage.objects.count(), 1)
-        self.assertEqual(HiddenLocation.objects.count(), 1)
-        self.assertEqual(UserDeposits.objects.count(), 0)
-
-        hidden_location = HiddenLocation.objects.first()
-        self.assertEqual(hidden_location.combination, "DmVnRJ")
-        self.assertEqual(hidden_location.lvl, 60)
+#     def test_execute_found_hidden_location_or_headquarter_should_ignore_duplicate_combination(self):
+#         message_text = """You found hidden location Ancient Ruins lvl.60
+# You noticed that objective is captured by alliance.
+# То remember the route you associated it with simple combination: DmVnRJ"""
+#
+#         message_data_1 = {
+#             "chat_id": 456,
+#             "forward_date": datetime.now(),
+#             "message_text": message_text,
+#             "message_id": 987,
+#         }
+#         message_data_2 = {
+#             "chat_id": 456,
+#             "forward_date": datetime.now(),
+#             "message_text": message_text,
+#             "message_id": 876543,
+#         }
+#         HiddenMessage.objects.all().delete()
+#
+#         _execute_found_hidden_location_or_headquarter(self.telegram_user_data, message_data_1)
+#         _execute_found_hidden_location_or_headquarter(self.telegram_user_data, message_data_2)
+#
+#         self.assertEqual(HiddenMessage.objects.count(), 1)
+#         self.assertEqual(HiddenLocation.objects.count(), 1)
+#         self.assertEqual(UserDeposits.objects.count(), 0)
+#
+#         hidden_location = HiddenLocation.objects.first()
+#         self.assertEqual(hidden_location.combination, "DmVnRJ")
+#         self.assertEqual(hidden_location.lvl, 60)
