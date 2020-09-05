@@ -130,7 +130,11 @@ def select_order_command(update: Update, context: CallbackContext, telegram_user
         keyboard = []
         for hl in all_hidden_locations:
             keyboard.append(
-                [InlineKeyboardButton(f"{hl.name} lvl {hl.lvl}", callback_data=f"ga_atk_{hl.combination}"),]
+                [
+                    InlineKeyboardButton(
+                        f"{hl.name} lvl {hl.lvl} - {hl.combination}", callback_data=f"ga_atk_{hl.combination}"
+                    ),
+                ]
             )
         reply_markup = InlineKeyboardMarkup(keyboard)
         message = context.user_data["message"] + f"Select the location"
@@ -144,7 +148,11 @@ def select_order_command(update: Update, context: CallbackContext, telegram_user
         keyboard = []
         for hl in all_hidden_locations:
             keyboard.append(
-                [InlineKeyboardButton(f"{hl.name} lvl {hl.lvl}", callback_data=f"ga_def_{hl.combination}"),]
+                [
+                    InlineKeyboardButton(
+                        f"{hl.name} lvl {hl.lvl} - {hl.combination}", callback_data=f"ga_def_{hl.combination}"
+                    ),
+                ]
             )
         reply_markup = InlineKeyboardMarkup(keyboard)
         message = context.user_data["message"] + f"Select the location"
@@ -158,7 +166,7 @@ def select_order_command(update: Update, context: CallbackContext, telegram_user
         keyboard = []
         for hq in all_hidden_headquarters:
             keyboard.append(
-                [InlineKeyboardButton(f"{hq.name}", callback_data=f"ga_atk_{hq.combination}"),]
+                [InlineKeyboardButton(f"{hq.name} - {hq.combination}", callback_data=f"ga_atk_{hq.combination}"),]
             )
         reply_markup = InlineKeyboardMarkup(keyboard)
         message = context.user_data["message"] + f"Select the headquarter"
