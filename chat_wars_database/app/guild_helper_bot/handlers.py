@@ -39,6 +39,7 @@ LVL_41_TO_60 = "LVL_41_TO_60"
 LVL_61_80 = "LVL_61_80"
 GA_DEF = "GA_DEF"
 GA_ATK_LOCATION = "GA_ATK_LOCATION"
+GA_DEF_LOCATION = "GA_DEF_LOCATION"
 ATK_HEADQUARTER = "ATK_HEADQUARTER"
 SHOW_LOCATIONS = "SHOW_LOCATIONS"
 SHOW_HEADQUARTERS = "SHOW_HEADQUARTERS"
@@ -93,6 +94,7 @@ def select_level_command(update: Update, context: CallbackContext):
     keyboard = [
         [InlineKeyboardButton("ga_def", callback_data=GA_DEF),],
         [InlineKeyboardButton("ga_atk location", callback_data=GA_ATK_LOCATION),],
+        [InlineKeyboardButton("ga_def location", callback_data=GA_DEF_LOCATION),],
         [InlineKeyboardButton("ga_atk headquarter", callback_data=ATK_HEADQUARTER),],
     ]
 
@@ -129,6 +131,20 @@ def select_order_command(update: Update, context: CallbackContext, telegram_user
         for hl in all_hidden_locations:
             keyboard.append(
                 [InlineKeyboardButton(f"{hl.name} lvl {hl.lvl}", callback_data=f"ga_atk_{hl.combination}"),]
+            )
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        message = context.user_data["message"] + f"Select the location"
+        bot.edit_message_text(
+            chat_id=query.message.chat_id, message_id=query.message.message_id, text=message, reply_markup=reply_markup
+        )
+        return SELECT_COMBINATION
+
+    if text == GA_DEF_LOCATION:
+        all_hidden_locations = get_all_hidden_locations(telegram_user)
+        keyboard = []
+        for hl in all_hidden_locations:
+            keyboard.append(
+                [InlineKeyboardButton(f"{hl.name} lvl {hl.lvl}", callback_data=f"ga_def_{hl.combination}"),]
             )
         reply_markup = InlineKeyboardMarkup(keyboard)
         message = context.user_data["message"] + f"Select the location"
@@ -243,9 +259,13 @@ def create_new_message_conversation(dp: Dispatcher):
             SELECT_ORDER: [
                 CallbackQueryHandler(select_order_command, pattern=f"^{GA_DEF}$"),
                 CallbackQueryHandler(select_order_command, pattern=f"^{GA_ATK_LOCATION}$"),
+                CallbackQueryHandler(select_order_command, pattern=f"^{GA_DEF_LOCATION}$"),
                 CallbackQueryHandler(select_order_command, pattern=f"^{ATK_HEADQUARTER}$"),
             ],
-            SELECT_COMBINATION: [CallbackQueryHandler(select_combination_command, pattern="ga_atk_.*")],
+            SELECT_COMBINATION: [
+                CallbackQueryHandler(select_combination_command, pattern="ga_atk_.*"),
+                CallbackQueryHandler(select_combination_command, pattern="ga_def_.*"),
+            ],
             SEND_MESSAGES: [CallbackQueryHandler(send_messages_in_channels, pattern=f"^{SEND_MESSAGE}$")],
         },
         fallbacks=[CommandHandler("cancel", cancel)],
