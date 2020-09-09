@@ -220,11 +220,12 @@ def show_final_message_command(update: Update, context: CallbackContext):
     ]
     context.user_data["reply_markup"] = InlineKeyboardMarkup(keyboard)
 
-    keyboard.append(
+    keyboard2 = keyboard.copy()
+    keyboard2.append(
         [InlineKeyboardButton("SEND MESSAGE", callback_data=SEND_MESSAGE),]
     )
 
-    reply_markup = InlineKeyboardMarkup(keyboard)
+    reply_markup = InlineKeyboardMarkup(keyboard2)
 
     context.user_data["message"] = message
 
